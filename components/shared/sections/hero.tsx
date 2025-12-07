@@ -1,38 +1,55 @@
 import { ArrowRight, Droplets, Sparkles, Wand2 } from "lucide-react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 type HeroProps = {
   className?: string;
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
 };
 
-export function Hero({ className }: HeroProps) {
+export function Hero({
+  className,
+  eyebrow = "Beauty Care",
+  title = "Your Best Skin Starts Here",
+  description = "Science-backed formulas. Nature-inspired ingredients. Glow with skincare that's made to love and made to last.",
+  imageUrl = "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1800&q=80",
+}: HeroProps) {
+  const backgroundSrc = imageUrl;
+
   return (
     <section className={cn("w-full", className)}>
       <div className="relative overflow-hidden rounded-[32px] border border-white/30 bg-slate-900/80 shadow-2xl">
         <div
-          className="relative flex min-h-[75vh] items-center justify-center bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1800&q=80')",
-          }}
+          className="relative flex min-h-[75vh] items-center justify-center overflow-hidden bg-slate-900"
         >
+          <Image
+            src={backgroundSrc}
+            alt={title}
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+            unoptimized={backgroundSrc.startsWith("http://localhost")}
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/35" />
 
           <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-6 px-6 text-center text-white">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
-              Beauty Care
+              {eyebrow}
             </span>
             <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-              Your Best Skin Starts Here
+              {title}
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-              Science-backed formulas. Nature-inspired ingredients. Glow with skincare
-              that&apos;s made to love and made to last.
+              {description}
             </p>
             <Button
-              className="group mt-2 h-12 rounded-full bg-[#1f3b34] px-6 text-base font-semibold text-white shadow-lg hover:bg-[#1a312b]"
+              className="group mt-2 h-12 rounded-full bg-brand-forest px-6 text-base font-semibold text-white shadow-lg hover:bg-brand-leaf"
               size="lg"
             >
               Shop Now

@@ -19,6 +19,14 @@ const config: Config = {
     },
     extend: {
       colors: {
+        brand: {
+          forest: "var(--brand-forest)",
+          leaf: "var(--brand-leaf)",
+          sage: "var(--brand-sage)",
+          mist: "var(--brand-mist)",
+          ink: "var(--brand-ink)",
+          cream: "var(--brand-cream)",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

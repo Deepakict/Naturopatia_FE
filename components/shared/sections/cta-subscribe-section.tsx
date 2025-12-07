@@ -1,43 +1,102 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type CtaSubscribeSectionProps = {
+type NewsLetterSectionProps = {
   className?: string;
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  inputPlaceholder?: string;
+  buttonLabel?: string;
+  backgroundUrl?: string;
+  isVideo?: boolean;
 };
 
-export function CtaSubscribeSection({ className }: CtaSubscribeSectionProps) {
+export function NewsLetterSection({
+  className,
+  eyebrow = "Get Started",
+  title = "Join the Anti Fake Community",
+  description = "Sign up for exclusive offers, skincare tips, and new product launches directly in your inbox.",
+  inputPlaceholder = "Enter email...",
+  buttonLabel = "Subscribe",
+  backgroundUrl,
+  isVideo = false,
+}: NewsLetterSectionProps) {
+  const hasVideo = isVideo || (backgroundUrl?.toLowerCase().endsWith(".mp4") ?? false);
+
   return (
-    <section className={cn("w-full rounded-[32px] bg-[#eef2f1] px-6 py-12 sm:px-12 lg:px-16", className)}>
-      <div className="relative mx-auto flex max-w-[1400px] overflow-hidden rounded-[28px] bg-slate-900">
+    <section className={cn("w-full px-6 py-12 sm:px-12 lg:px-16", className)}>
+      <div className="relative mx-auto flex max-w-[1440px] overflow-hidden rounded-[32px] bg-[#F1F3F3]">
+        {backgroundUrl ? (
+          hasVideo ? (
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              src={backgroundUrl}
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          ) : (
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url('${backgroundUrl}')` }}
+            />
+          )
+        ) : null}
+        {backgroundUrl ? (
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/70" />
+        ) : null}
+
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1800&q=80')",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
-
-        <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center gap-6 px-6 py-16 text-center text-white sm:py-20 lg:py-24">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/80">
-            Get Started
+          className={cn(
+            "relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-6 py-16 text-center sm:py-20 lg:py-24",
+            backgroundUrl ? "text-white" : "text-brand-forest",
+          )}
+        >
+          <p
+            className={cn(
+              "text-xs font-semibold uppercase tracking-[0.22em]",
+              backgroundUrl ? "text-white/85" : "text-slate-600",
+            )}
+          >
+            {eyebrow}
           </p>
-          <h3 className="text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-            Join the Anti Fake Community
+          <h3
+            className={cn(
+              "text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl",
+              backgroundUrl ? "text-white" : "text-brand-forest",
+            )}
+          >
+            {title}
           </h3>
-          <p className="max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
-            Sign up for exclusive offers, skincare tips, and new product launches directly
-            in your inbox.
+          <p
+            className={cn(
+              "max-w-2xl text-base leading-relaxed sm:text-lg",
+              backgroundUrl ? "text-white/85" : "text-brand-forest",
+            )}
+          >
+            {description}
           </p>
 
-          <form className="flex w-full flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <form className="flex w-full max-w-xl flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <input
               type="email"
-              placeholder="Enter email..."
-              className="h-12 w-full max-w-md rounded-full border-none bg-white/95 px-5 text-sm text-slate-800 shadow-md outline-none ring-2 ring-transparent transition focus:ring-white sm:flex-1"
+              placeholder={inputPlaceholder}
+              className={cn(
+                "h-12 w-full rounded-full px-5 text-sm shadow-lg outline-none ring-2 ring-transparent transition sm:flex-1",
+                backgroundUrl ? "border-none bg-white text-slate-800 focus:ring-white" : "border border-brand-mist bg-white text-brand-forest focus:ring-brand-forest/40",
+              )}
             />
-            <Button className="h-12 w-full rounded-full bg-[#1f3b34] px-6 text-sm font-semibold text-white shadow-lg hover:bg-[#183128] sm:w-auto">
-              Subscribe
+            <Button
+              className={cn(
+                "h-12 w-full rounded-full px-8 text-sm font-semibold shadow-lg sm:w-auto",
+                backgroundUrl
+                  ? "bg-brand-forest text-white hover:bg-brand-leaf"
+                  : "border border-brand-forest bg-brand-forest text-white hover:bg-brand-leaf",
+              )}
+            >
+              {buttonLabel}
             </Button>
           </form>
         </div>

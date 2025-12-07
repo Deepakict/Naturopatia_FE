@@ -16,7 +16,7 @@ export function CouponBar({
   return (
     <div
       className={cn(
-        "w-full bg-[#0f0f0f] text-white shadow-lg shadow-black/20",
+        "w-full bg-brand-ink text-white shadow-lg shadow-black/20",
         className,
       )}
     >

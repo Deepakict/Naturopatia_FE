@@ -4,6 +4,22 @@
 
 @layer base {
   :root {
+    --brand-forest: #1D3A34;
+    --brand-leaf: #1D3A34;
+    --brand-sage: #e7eee9;
+    --brand-mist: #b5c5bf;
+    --brand-ink: #1e2124;
+    --brand-cream: #f4f6f5;
+
+    --font-family-base: "Inter Tight", "Inter", var(--font-geist-sans), system-ui,
+      -apple-system, sans-serif;
+    --font-size-base: 16px;
+    --font-size-sm: 14px;
+    --font-size-lg: 18px;
+    --page-padding: 1.5rem;
+    --section-padding: 3rem;
+    --gutter: 1.5rem;
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --muted: 240 4.8% 95.9%;
@@ -55,6 +71,39 @@
   }
 
   body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
     @apply bg-background text-foreground antialiased;
+  }
+
+  /* Allow easy tuning of common text sizes via CSS variables */
+  .text-sm {
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+  }
+
+  .text-base {
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+  }
+
+  .text-lg {
+    font-size: var(--font-size-lg);
+    line-height: 1.6;
+  }
+
+  @keyframes heroFade {
+    from {
+      opacity: 0;
+      transform: scale(1.02);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }

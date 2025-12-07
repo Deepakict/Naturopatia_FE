@@ -12,12 +12,13 @@ export type StrapiMedia = {
 export type HomePageAttributes = {
   HeroSection?: { title?: string | null; subtitle?: string | null; heroImage?: StrapiMedia };
   PhilosophySection?: { title?: string | null };
-  OurProductsSection?: { title?: string | null };
+  OurProductSection?: { title?: string | null };
   ProductSection?: { title?: string | null };
   ChooseUsSection?: { title?: string | null };
   NewsletterSection?: { title?: string | null };
   CommunitySection?: { title?: string | null };
   TestimonialSection?: { title?: string | null };
+  RetailerSection?: { title?: string | null };
 };
 
 export type HomePageResponse = {
@@ -26,7 +27,7 @@ export type HomePageResponse = {
 };
 
 const HOMEPAGE_POPULATE_QUERY =
-  "populate[HeroSection][populate][heroImage]=true&populate[PhilosophySection][populate][images]=true&populate[PhilosophySection][populate][PhilosophyItems][populate][icon]=true&populate[OurProductsSection][populate][products][populate][gallery]=true&populate[ProductSection][populate][cover]=true&populate[ChooseUsSection][populate][hero]=true&populate[ChooseUsSection][populate][ChooseUsItems][populate][icon]=true&populate[NewsletterSection][populate][background]=true&populate[CommunitySection][populate][CommunityCards][populate][images]=true&populate[TestimonialSection][populate][Testimonials][populate][avatar]=true";
+  "populate[HeroSection][populate][heroImage]=true&populate[PhilosophySection][populate][images]=true&populate[PhilosophySection][populate][PhilosophyItems][populate][icon]=true&populate[OurProductSection][populate][products][populate][gallery]=true&populate[ProductSection][populate][cover]=true&populate[ProductSection][populate][article][populate]=*&populate[ChooseUsSection][populate][hero]=true&populate[ChooseUsSection][populate][ChooseUsItems][populate][icon]=true&populate[NewsletterSection][populate][background]=true&populate[CommunitySection][populate][CommunityCards][populate][images]=true&populate[TestimonialSection][populate][testimonials][populate][avatar]=true&populate[RetailerSection][populate][retailers][populate][logo]=true";
 
 export async function fetchHomePage(): Promise<HomePageResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -46,11 +47,7 @@ export async function fetchHomePage(): Promise<HomePageResponse> {
     throw new Error(`Failed to fetch Strapi homepage data (${response.status}).`);
   }
 
-  console.log("[Strapi] homepage fetch", { url, status: response.status });
-
   const json = await response.json();
-
-  console.log("[Strapi] homepage response", JSON.stringify(json, null, 2));
 
   return json;
 }

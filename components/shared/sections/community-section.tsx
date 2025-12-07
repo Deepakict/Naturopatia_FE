@@ -11,43 +11,34 @@ type CommunitySectionProps = {
 
 export function CommunitySection({ className, tiles = communityContent }: CommunitySectionProps) {
   return (
-    <section
-      className={cn(
-        "w-full rounded-[32px] bg-[#eef2f1] px-6 py-14 sm:px-12 lg:px-16",
-        className,
-      )}
-    >
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
-        <h3 className="text-3xl font-semibold text-[#2f4a41] sm:text-4xl">Our Community</h3>
+    <section className={cn("w-full px-6 py-14 sm:px-12 lg:px-16", className)}>
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-8">
+        <h3 className="text-3xl font-semibold text-brand-forest sm:text-4xl">Our Community</h3>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {tiles.map((tile, idx) => (
             <div
               key={idx}
-              className="relative overflow-hidden rounded-[24px] bg-white shadow-[0_18px_45px_-28px_rgba(0,0,0,0.35)]"
+              className="group relative flex aspect-[1/1] items-center justify-center overflow-hidden rounded-[26px] bg-white shadow-sm"
             >
               <div
-                className="aspect-[4/4.5] w-full bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-center transition duration-200 group-hover:scale-[1.02]"
                 style={{ backgroundImage: `url(${tile.image})` }}
               />
               {tile.ctaLabel && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/25 backdrop-blur-sm">
-                  <Button
-                    variant="outline"
-                    className="group h-11 rounded-full border-white text-white hover:bg-white hover:text-[#2f4a41]"
-                    asChild={!!tile.ctaHref}
-                  >
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/70 opacity-0 transition duration-200 group-hover:opacity-100">
+                  <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-brand-forest px-5 py-2 text-sm font-semibold text-brand-forest bg-white">
                     {tile.ctaHref ? (
-                      <a href={tile.ctaHref} className="flex items-center">
+                      <a href={tile.ctaHref} className="flex items-center gap-2">
                         {tile.ctaLabel}
-                        <ArrowUpRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        <ArrowUpRight className="h-4 w-4" />
                       </a>
                     ) : (
                       <>
                         {tile.ctaLabel}
-                        <ArrowUpRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        <ArrowUpRight className="h-4 w-4" />
                       </>
                     )}
-                  </Button>
+                  </div>
                 </div>
               )}
             </div>

@@ -88,12 +88,12 @@ export function LoginCard({ className }: LoginCardProps) {
           </div>
         </div>
 
-        <Button className="h-12 w-full rounded-full bg-[#1f3b34] text-base font-semibold tracking-wide text-white hover:bg-[#1b332c]">
+        <Button className="h-12 w-full rounded-full bg-brand-forest text-base font-semibold tracking-wide text-white hover:bg-brand-leaf">
           LOGIN
         </Button>
       </form>
 
-      <div className="mt-6 text-center text-sm font-semibold uppercase tracking-[0.08em] text-[#1f3b34]">
+      <div className="mt-6 text-center text-sm font-semibold uppercase tracking-[0.08em] text-brand-forest">
         <button type="button" className="underline underline-offset-4">
           Forgot password
         </button>
