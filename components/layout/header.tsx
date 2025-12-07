@@ -1,20 +1,18 @@
 "use client";
 
 import { ShoppingBag, User } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-type NavItem = {
-  label: string;
-  href: string;
-};
+type NavItem = { label: string; href: string };
 
 const navItems: NavItem[] = [
-  { label: "Our Product", href: "#" },
-  { label: "Blog", href: "#" },
-  { label: "About Us", href: "#" },
-  { label: "Contact", href: "#" },
-  { label: "AI Assistant", href: "#" },
+  { label: "Home", href: "/" },
+  { label: "Our Product", href: "/category/cleanser" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 type HeaderProps = {
@@ -22,6 +20,8 @@ type HeaderProps = {
 };
 
 export function Header({ className }: HeaderProps) {
+  const pathname = usePathname();
+
   return (
     <header
       className={cn(
@@ -44,15 +44,24 @@ export function Header({ className }: HeaderProps) {
         </div>
 
         <nav className="hidden items-center gap-8 text-sm font-medium text-emerald-900 lg:flex">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="transition hover:text-emerald-700"
-            >
-              {item.label}
-            </a>
-          ))}
+          {navItems.map((item) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={cn(
+                  "transition hover:text-emerald-700",
+                  isActive && "font-semibold text-emerald-800",
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-3">

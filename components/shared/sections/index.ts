@@ -1,0 +1,9 @@
+export { Hero } from "./hero";
+export { PhilosophySection } from "./philosophy-section";
+export { ProductsSection } from "./products-section";
+export { DifferenceSection } from "./difference-section";
+export { IngredientsSection } from "./ingredients-section";
+export { TestimonialsSection } from "./testimonials-section";
+export { CtaSubscribeSection } from "./cta-subscribe-section";
+export { CommunitySection } from "./community-section";
+export { RetailersSection } from "./retailers-section";
