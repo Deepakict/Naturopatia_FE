@@ -1,7 +1,6 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 
 import { HeroCarousel } from "@/components/shared/sections/hero-carousel";
-import { PhilosophySection } from "@/components/shared/sections/philosophy-section";
 import { ProductsSection } from "@/components/shared/sections/products-section";
 import { WhyChooseUS } from "@/components/shared/sections/difference-section";
 import { ProductHighlightSection } from "@/components/shared/sections/ingredients-section";
@@ -220,12 +219,6 @@ export default async function Home() {
     <HydrationBoundary state={dehydrate(queryClient)}>
       <>
         <HeroCarousel slides={heroSlides} />
-        <PhilosophySection
-          eyebrow={philosophy?.eyebrow}
-          headline={philosophy?.headline}
-          images={philosophyImages}
-          items={philosophyItems}
-        />
         <ProductsSection
           title={ourProductsSection?.productTitle ?? "Our Products"}
           products={ourProducts}

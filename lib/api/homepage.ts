@@ -27,7 +27,7 @@ export type HomePageResponse = {
 };
 
 const HOMEPAGE_POPULATE_QUERY =
-  "populate[HeroSection][populate][heroImage]=true&populate[PhilosophySection][populate][images]=true&populate[PhilosophySection][populate][PhilosophyItems][populate][icon]=true&populate[OurProductSection][populate][products][populate][gallery]=true&populate[ProductSection][populate][cover]=true&populate[ProductSection][populate][article][populate]=*&populate[ChooseUsSection][populate][hero]=true&populate[ChooseUsSection][populate][ChooseUsItems][populate][icon]=true&populate[NewsletterSection][populate][background]=true&populate[CommunitySection][populate][CommunityCards][populate][images]=true&populate[TestimonialSection][populate][testimonials][populate][avatar]=true&populate[RetailerSection][populate][retailers][populate][logo]=true";
+  "populate[HeroSection][populate][heroImage]=true&populate[PhilosophySection][populate][images]=true&populate[PhilosophySection][populate][PhilosophyItems][populate][icon]=true&populate[OurProductSection][populate][products][populate][gallery]=true&populate[ProductSection][populate][cover]=true&populate[ProductSection][populate][article][populate]=*&populate[ChooseUsSection][populate][hero]=true&populate[ChooseUsSection][populate][ChooseUsItems][populate][icon]=true&populate[NewsletterSection][populate][background]=true&populate[CommunitySection][populate][CommunityCards][populate][images]=true&populate[TestimonialSection][populate][testimonials][populate][avatar]=true";
 
 export async function fetchHomePage(): Promise<HomePageResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
