@@ -1,5 +1,4 @@
 export { Hero } from "./hero";
-export { PhilosophySection } from "./philosophy-section";
 export { ProductsSection } from "./products-section";
 export { WhyChooseUS } from "./difference-section";
 export { ProductHighlightSection } from "./ingredients-section";

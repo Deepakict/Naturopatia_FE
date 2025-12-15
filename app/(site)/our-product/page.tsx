@@ -1,10 +1,9 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-
-import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-section";
 import { HeroCarousel } from "@/components/shared/sections/hero-carousel";
 import { ArticlesSection } from "@/components/shared/sections/articles-section";
 import { ProductsSection } from "@/components/shared/sections/products-section";
 import { RetailersSection } from "@/components/shared/sections/retailers-section";
+import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-section";
 import { ourProductQueryOptions } from "@/lib/api/our-product";
 
 function formatDate(dateString?: string) {

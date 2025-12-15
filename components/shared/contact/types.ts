@@ -3,6 +3,12 @@ export type ContactHero = {
   title: string;
   subtitle?: string;
   image: string;
+  sectionHeading?: string;
+  inputFirstNameLabel?: string;
+  inputLastNameLabel?: string;
+  inputEmailLabel?: string;
+  inputMessageLabel?: string;
+  buttonLabel?: string;
 };
 
 export type FAQItem = {
