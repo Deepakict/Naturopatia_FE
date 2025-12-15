@@ -16,7 +16,7 @@ export default async function Home() {
   const attributes = (homepageData?.data as any)?.attributes ?? (homepageData?.data as any);
   const heroEntry = attributes?.HeroSection;
   const heroArray = Array.isArray(heroEntry) ? heroEntry : heroEntry ? [heroEntry] : [];
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:1337";
   const heroSlides =
     heroArray.map((item: any) => {
       const img = Array.isArray(item?.heroImage) ? item.heroImage[0] : item?.heroImage?.[0];
@@ -116,22 +116,24 @@ export default async function Home() {
       };
     }) || undefined;
 
-  const retailerSection = attributes?.RetailerSection;
+  const retailerSection =
+    attributes?.RetailerSection ?? attributes?.RetailersSection ?? attributes?.retailersSection;
   const retailerItems =
-    retailerSection?.retailers
+    (retailerSection?.retailer ?? retailerSection?.retailers)
       ?.map((retailer: any) => {
-        const logo = retailer?.logo;
+        const logo = retailer?.icon ?? retailer?.logo;
         const logoUrl =
           (logo?.url && `${baseUrl}${logo.url}`) ||
           (logo?.formats?.large?.url && `${baseUrl}${logo.formats.large.url}`) ||
           (logo?.formats?.medium?.url && `${baseUrl}${logo.formats.medium.url}`) ||
+          (logo?.formats?.small?.url && `${baseUrl}${logo.formats.small.url}`) ||
           undefined;
         if (!logoUrl) return null;
         return {
-          name: retailer?.name ?? "Retailer",
+          name: retailer?.title ?? retailer?.name ?? "Retailer",
           logo: logoUrl,
-          width: logo?.width ?? 180,
-          height: logo?.height ?? 60,
+          width: logo?.width ?? logo?.formats?.large?.width ?? 180,
+          height: logo?.height ?? logo?.formats?.large?.height ?? 60,
         };
       })
       .filter(Boolean) || undefined;
@@ -196,7 +198,6 @@ export default async function Home() {
         undefined,
     })) ?? undefined;
 
-  console.log("Homepage hero slides:", heroSlides.length);
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <>
@@ -228,7 +229,7 @@ export default async function Home() {
         <CommunitySection tiles={communityTiles} />
         <RetailersSection
           retailers={retailerItems}
-          eyebrow={retailerSection?.eyebrow}
+          eyebrow={retailerSection?.eyebrow ?? retailerSection?.eyeBrow}
           title={retailerSection?.title}
         />
       </>
