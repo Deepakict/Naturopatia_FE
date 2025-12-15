@@ -19,7 +19,7 @@ export function ProductsSection({
   products = productsContent,
   title = "Our Products",
 }: ProductsSectionProps) {
-  const { addItem } = useCart();
+  const { addItem, items: cartItems, updateQuantity } = useCart();
   const initialQuantities = useMemo(() => {
     const map: Record<string, number> = {};
     products.forEach((p) => {
@@ -33,6 +33,11 @@ export function ProductsSection({
   const [added, setAdded] = useState<Record<string, boolean>>({});
 
   const updateQty = (key: string, delta: number) => {
+    const cartItem = cartItems.find((item) => item.id === key);
+    if (cartItem) {
+      updateQuantity(key, Math.max(1, cartItem.quantity + delta));
+      return;
+    }
     setQuantities((prev) => {
       const next = { ...prev };
       const current = prev[key] ?? 1;
@@ -72,8 +77,9 @@ export function ProductsSection({
                 ? `/our-product/${product.slug ?? product.documentId}`
                 : undefined;
             const key = product.slug ?? product.documentId ?? product.name;
-            const qty = quantities[key] ?? 1;
-            const isAdded = added[key] ?? false;
+            const cartItem = cartItems.find((item) => item.id === key);
+            const qty = cartItem?.quantity ?? quantities[key] ?? 1;
+            const isAdded = cartItem ? true : added[key] ?? false;
 
             const Card = (
               <article className="group relative flex h-full flex-col gap-4 rounded-[28px] bg-[#F6F8F8] p-4 transition hover:-translate-y-1 hover:shadow-lg">

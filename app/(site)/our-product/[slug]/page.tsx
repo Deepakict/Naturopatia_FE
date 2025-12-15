@@ -91,6 +91,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     })) ?? [];
 
   const productDetailData = {
+    id: productAttr?.slug ?? productAttr?.documentId ?? String(productAttr?.id ?? productAttr?.title),
     title: productAttr?.title ?? "Product",
     price:
       typeof productAttr?.defaultPrice === "number"

@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { CartModal, type CartItem } from "./cart-modal";
+import { CartModal } from "./cart-modal";
 import { useCart } from "./cart-context";
 
 type NavItem = { label: string; href: string };
