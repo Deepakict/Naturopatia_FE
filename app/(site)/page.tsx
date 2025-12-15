@@ -1,5 +1,4 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-
 import { HeroCarousel } from "@/components/shared/sections/hero-carousel";
 import { ProductsSection } from "@/components/shared/sections/products-section";
 import { WhyChooseUS } from "@/components/shared/sections/difference-section";
@@ -8,25 +7,13 @@ import { TestimonialsSection } from "@/components/shared/sections/testimonials-s
 import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-section";
 import { CommunitySection } from "@/components/shared/sections/community-section";
 import { RetailersSection } from "@/components/shared/sections/retailers-section";
-import { homepageQueryKey, homepageQueryOptions, type HomePageResponse } from "@/lib/api/homepage";
+import { homepageQueryOptions } from "@/lib/api/homepage";
 
 export default async function Home() {
   const queryClient = new QueryClient();
 
   const homepageData = await queryClient.ensureQueryData(homepageQueryOptions());
   const attributes = (homepageData?.data as any)?.attributes ?? (homepageData?.data as any);
-
-  console.log("[Homepage] fetched data", {
-    id: homepageData?.data?.id,
-    heroCount: Array.isArray(attributes?.HeroSection)
-      ? attributes.HeroSection.length
-      : attributes?.HeroSection
-        ? 1
-        : 0,
-    testimonials: attributes?.TestimonialSection?.Testimonials?.length ?? 0,
-    communityCards: attributes?.CommunitySection?.CommunityCards?.length ?? 0,
-  });
-
   const heroEntry = attributes?.HeroSection;
   const heroArray = Array.isArray(heroEntry) ? heroEntry : heroEntry ? [heroEntry] : [];
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
@@ -61,27 +48,6 @@ export default async function Home() {
       };
     }) ?? [];
 
-  const philosophy = attributes?.PhilosophySection;
-
-  const philosophyImages =
-    philosophy?.images?.map((img: any) => {
-      const url =
-        (img?.formats?.thumbnail?.url && `${baseUrl}${img.formats.thumbnail.url}`) ||
-        (img?.url && `${baseUrl}${img.url}`) ||
-        undefined;
-      return url;
-    }) ?? [];
-
-  const philosophyItems =
-    philosophy?.PhilosophyItems?.map((item: any) => ({
-      title: item?.title ?? "",
-      description: item?.description ?? "",
-      icon:
-        (item?.icon?.url && `${baseUrl}${item.icon.url}`) ||
-        (item?.icon?.formats?.thumbnail?.url && `${baseUrl}${item.icon.formats.thumbnail.url}`) ||
-        undefined,
-    })) ?? [];
-
   const ourProductsSection = attributes?.OurProductSection;
   const ourProducts =
     ourProductsSection?.products?.map((product: any) => {
@@ -93,12 +59,28 @@ export default async function Home() {
         undefined;
       const ratingValue =
         typeof product?.rating === "number" ? product.rating : Number(product?.rating ?? 0) || 0;
+      const priceValue =
+        typeof product?.defaultPrice === "number"
+          ? product.defaultPrice
+          : typeof product?.price === "number"
+            ? product.price
+            : product?.sizeType?.[0]?.price ?? undefined;
+      const sizeRaw = product?.sizeType?.[0]?.size ?? product?.size ?? "";
+      const sizeLabel = sizeRaw ? `${sizeRaw}${Number.isFinite(Number(sizeRaw)) ? " ml" : ""}` : undefined;
       return {
         name: product?.title ?? "Product",
         image,
-        price: product?.price ? `$${product.price}` : undefined,
+        price: typeof priceValue === "number" ? `₹${priceValue}` : product?.price ?? undefined,
+        originalPrice:
+          typeof product?.compareAtPrice === "number" ? `₹${product.compareAtPrice}` : undefined,
         rating: ratingValue || 5,
-        reviews: product?.reviews ?? 0,
+        reviews: product?.reviewsCount ?? product?.reviews ?? 0,
+        sizeLabel,
+        badgeLabel: product?.badge ?? (product?.inStock ? "In Stock" : undefined),
+        badgeTone: product?.inStock ? "success" : "accent",
+        limitedLabel: product?.limitedEdition ? "Limited Edition" : undefined,
+        slug: product?.slug ?? product?.documentId,
+        documentId: product?.documentId,
       };
     }) ?? undefined;
 

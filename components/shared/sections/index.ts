@@ -7,3 +7,4 @@ export { TestimonialsSection } from "./testimonials-section";
 export { NewsLetterSection } from "./cta-subscribe-section";
 export { CommunitySection } from "./community-section";
 export { RetailersSection } from "./retailers-section";
+export { ArticlesSection } from "./articles-section";

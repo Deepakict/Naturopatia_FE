@@ -20,9 +20,15 @@ type HeroCarouselProps = {
   className?: string;
   slides: HeroSlide[];
   intervalMs?: number;
+  minHeightClass?: string;
 };
 
-export function HeroCarousel({ className, slides, intervalMs = 6000 }: HeroCarouselProps) {
+export function HeroCarousel({
+  className,
+  slides,
+  intervalMs = 6000,
+  minHeightClass = "min-h-[120vh]",
+}: HeroCarouselProps) {
   const safeSlides = useMemo(() => (slides.length ? slides : [defaultSlide]), [slides]);
   const [index, setIndex] = useState(0);
 
@@ -41,7 +47,7 @@ export function HeroCarousel({ className, slides, intervalMs = 6000 }: HeroCarou
   return (
     <section className={cn("w-full", className)}>
       <div className="relative overflow-hidden rounded-[32px] border border-white/30 bg-slate-900/80 shadow-2xl">
-        <div className="relative flex min-h-[120vh] items-center justify-center overflow-hidden bg-slate-900">
+        <div className={cn("relative flex items-center justify-center overflow-hidden bg-slate-900", minHeightClass)}>
           <Image
             src={backgroundSrc}
             alt={current.title || "Hero background"}

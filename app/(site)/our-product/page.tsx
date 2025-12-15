@@ -2,14 +2,22 @@ import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query
 
 import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-section";
 import { HeroCarousel } from "@/components/shared/sections/hero-carousel";
+import { ArticlesSection } from "@/components/shared/sections/articles-section";
 import { ProductsSection } from "@/components/shared/sections/products-section";
 import { RetailersSection } from "@/components/shared/sections/retailers-section";
-import { homepageQueryOptions } from "@/lib/api/homepage";
+import { ourProductQueryOptions } from "@/lib/api/our-product";
+
+function formatDate(dateString?: string) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("en-GB").format(date).replace(/\//g, ".");
+}
 
 export default async function OurProductPage() {
   const queryClient = new QueryClient();
-  const homepageData = await queryClient.ensureQueryData(homepageQueryOptions());
-  const attributes = (homepageData?.data as any)?.attributes ?? (homepageData?.data as any);
+  const ourProductData = await queryClient.ensureQueryData(ourProductQueryOptions());
+  const attributes = (ourProductData?.data as any)?.attributes ?? (ourProductData?.data as any);
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
@@ -46,9 +54,9 @@ export default async function OurProductPage() {
       };
     }) ?? [];
 
-  const ourProductsSection = attributes?.OurProductSection;
+  const productEntries = attributes?.products;
   const ourProducts =
-    ourProductsSection?.products?.map((product: any) => {
+    productEntries?.map((product: any) => {
       const img = Array.isArray(product?.gallery) ? product.gallery[0] : undefined;
       const image =
         (img?.formats?.large?.url && `${baseUrl}${img.formats.large.url}`) ||
@@ -57,16 +65,52 @@ export default async function OurProductPage() {
         undefined;
       const ratingValue =
         typeof product?.rating === "number" ? product.rating : Number(product?.rating ?? 0) || 0;
+      const priceValue =
+        typeof product?.defaultPrice === "number"
+          ? product.defaultPrice
+          : product?.sizeType?.[0]?.price ?? undefined;
+      const sizeRaw = product?.sizeType?.[0]?.size ?? product?.size ?? "";
+      const sizeLabel = sizeRaw ? `${sizeRaw}${Number.isFinite(Number(sizeRaw)) ? " ml" : ""}` : undefined;
       return {
         name: product?.title ?? "Product",
         image,
-        price: product?.price ? `$${product.price}` : undefined,
+        price: typeof priceValue === "number" ? `₹${priceValue}` : undefined,
+        originalPrice:
+          typeof product?.compareAtPrice === "number"
+            ? `₹${product.compareAtPrice}`
+            : undefined,
         rating: ratingValue || 5,
-        reviews: product?.reviews ?? 0,
+        reviews: product?.reviewsCount ?? product?.reviews ?? 0,
+        sizeLabel,
+        badgeLabel: product?.badge ?? (product?.inStock ? "In Stock" : undefined),
+        badgeTone: product?.inStock ? "success" : "accent",
+        limitedLabel: product?.limitedEdition ? "Limited Edition" : undefined,
+        slug: product?.slug ?? product?.documentId,
+        documentId: product?.documentId,
       };
     }) ?? undefined;
+  const productsTitle = attributes?.productsTitle ?? "Our Products";
 
-  const newsletter = attributes?.NewsletterSection;
+  const articleEntries = attributes?.articles ?? [];
+  const articleCards =
+    articleEntries?.map((article: any) => {
+      const cover = article?.cover;
+      const coverUrl =
+        (cover?.formats?.large?.url && `${baseUrl}${cover.formats.large.url}`) ||
+        (cover?.formats?.medium?.url && `${baseUrl}${cover.formats.medium.url}`) ||
+        (cover?.url && `${baseUrl}${cover.url}`) ||
+        undefined;
+      const date = formatDate(article?.publishedAt ?? article?.createdAt);
+      return {
+        title: article?.title ?? "Article",
+        excerpt: article?.description ?? "",
+        date,
+        category: article?.category?.name ?? "Insights",
+        image: coverUrl,
+      };
+    }) ?? [];
+
+  const newsletter = attributes?.newLetterSection;
   const newsletterBg = newsletter?.background;
   const newsletterBgUrl =
     (newsletterBg?.url && `${baseUrl}${newsletterBg.url}`) ||
@@ -84,11 +128,11 @@ export default async function OurProductPage() {
           .trim()
       : undefined;
 
-  const retailerSection = attributes?.RetailerSection;
+  const retailerSection = attributes?.RetailersSection ?? attributes?.RetailerSection;
   const retailerItems =
-    retailerSection?.retailers
+    retailerSection?.retailer
       ?.map((retailer: any) => {
-        const logo = retailer?.logo;
+        const logo = retailer?.icon ?? retailer?.logo;
         const logoUrl =
           (logo?.url && `${baseUrl}${logo.url}`) ||
           (logo?.formats?.large?.url && `${baseUrl}${logo.formats.large.url}`) ||
@@ -96,7 +140,7 @@ export default async function OurProductPage() {
           undefined;
         if (!logoUrl) return null;
         return {
-          name: retailer?.name ?? "Retailer",
+          name: retailer?.title ?? retailer?.name ?? "Retailer",
           logo: logoUrl,
           width: logo?.width ?? 180,
           height: logo?.height ?? 60,
@@ -107,11 +151,19 @@ export default async function OurProductPage() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <>
-        <HeroCarousel slides={heroSlides} />
+        <HeroCarousel
+          slides={heroSlides}
+          minHeightClass="min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh]"
+        />
 
         <ProductsSection
-          title={ourProductsSection?.productTitle ?? "Our Products"}
+          title={productsTitle}
           products={ourProducts}
+        />
+
+        <ArticlesSection
+          className="-mt-6"
+          articles={articleCards?.length ? articleCards : undefined}
         />
 
         <NewsLetterSection

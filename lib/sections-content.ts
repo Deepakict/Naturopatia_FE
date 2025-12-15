@@ -1,9 +1,17 @@
 export type Product = {
   name: string;
-  price: string;
-  rating: number;
-  reviews: number;
-  image: string;
+  price?: string;
+  originalPrice?: string;
+  rating?: number;
+  reviews?: number;
+  image?: string;
+  sizeLabel?: string;
+  badgeLabel?: string;
+  badgeTone?: "accent" | "success" | "muted";
+  limitedLabel?: string;
+  inStock?: boolean;
+  slug?: string;
+  documentId?: string;
 };
 
 export type Feature = {
@@ -47,8 +55,13 @@ export const productsContent: Product[] = [
   {
     name: "Cleanser · Purify and Refresh",
     price: "$40",
+    originalPrice: "$65",
     rating: 4.6,
     reviews: 620,
+    sizeLabel: "50 ml",
+    badgeLabel: "62% OFF",
+    badgeTone: "accent",
+    slug: "cleanser-purify-and-refresh",
     image:
       "https://images.unsplash.com/photo-1526045478516-99145907023c?auto=format&fit=crop&w=1200&q=80",
   },
@@ -57,6 +70,10 @@ export const productsContent: Product[] = [
     price: "$40",
     rating: 4.6,
     reviews: 620,
+    sizeLabel: "50 ml",
+    badgeLabel: "IN STOCK!",
+    badgeTone: "success",
+    slug: "toner-hydrate-and-balance",
     image:
       "https://images.unsplash.com/photo-1601049313729-4726f8141040?auto=format&fit=crop&w=1200&q=80",
   },
@@ -65,6 +82,9 @@ export const productsContent: Product[] = [
     price: "$40",
     rating: 4.7,
     reviews: 620,
+    sizeLabel: "50 ml",
+    limitedLabel: "Limited Edition",
+    slug: "serum-targeted-treatment",
     image:
       "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa4?auto=format&fit=crop&w=1200&q=80",
   },
@@ -73,6 +93,7 @@ export const productsContent: Product[] = [
     price: "$40",
     rating: 4.5,
     reviews: 620,
+    sizeLabel: "50 ml",
     image:
       "https://images.unsplash.com/photo-1506617420156-8e4536971650?auto=format&fit=crop&w=1200&q=80",
   },
