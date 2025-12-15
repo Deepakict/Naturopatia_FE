@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Minus, Plus } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { productsContent, type Product } from "@/lib/sections-content";
+import { useCart } from "@/components/layout/cart-context";
 
 type ProductsSectionProps = {
   className?: string;
@@ -15,6 +19,42 @@ export function ProductsSection({
   products = productsContent,
   title = "Our Products",
 }: ProductsSectionProps) {
+  const { addItem } = useCart();
+  const initialQuantities = useMemo(() => {
+    const map: Record<string, number> = {};
+    products.forEach((p) => {
+      const key = p.slug ?? p.documentId ?? p.name;
+      map[key] = 1;
+    });
+    return map;
+  }, [products]);
+
+  const [quantities, setQuantities] = useState<Record<string, number>>(initialQuantities);
+  const [added, setAdded] = useState<Record<string, boolean>>({});
+
+  const updateQty = (key: string, delta: number) => {
+    setQuantities((prev) => {
+      const next = { ...prev };
+      const current = prev[key] ?? 1;
+      const newVal = Math.max(1, current + delta);
+      next[key] = newVal;
+      return next;
+    });
+  };
+
+  const handleAdd = (key: string, product: Product) => {
+    const qty = quantities[key] ?? 1;
+    setAdded((prev) => ({ ...prev, [key]: true }));
+    addItem({
+      id: product.slug ?? product.documentId ?? product.name,
+      name: product.name,
+      price: product.price,
+      size: product.sizeLabel,
+      image: product.image,
+      quantity: qty,
+    });
+  };
+
   return (
     <section className={cn("w-full px-6 py-16 sm:px-12 lg:px-16", className)}>
       <div className="mx-auto flex max-w-[1440px] flex-col gap-10">
@@ -31,6 +71,9 @@ export function ProductsSection({
               product.slug || product.documentId
                 ? `/our-product/${product.slug ?? product.documentId}`
                 : undefined;
+            const key = product.slug ?? product.documentId ?? product.name;
+            const qty = quantities[key] ?? 1;
+            const isAdded = added[key] ?? false;
 
             const Card = (
               <article className="group relative flex h-full flex-col gap-4 rounded-[28px] bg-[#F6F8F8] p-4 transition hover:-translate-y-1 hover:shadow-lg">
@@ -84,10 +127,42 @@ export function ProductsSection({
                 </div>
 
                 <div className="mt-auto">
-                  <div className="hidden h-11 w-full items-center justify-center rounded-full bg-brand-forest text-sm font-semibold text-white transition hover:bg-brand-leaf group-hover:flex">
-                    ADD TO BAG
-                    <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </div>
+                  {isAdded ? (
+                    <div className="flex items-center justify-between rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-brand-forest">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          updateQty(key, -1);
+                        }}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-sm transition hover:border-brand-forest"
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="text-base font-semibold">{qty}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          updateQty(key, 1);
+                        }}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-sm transition hover:border-brand-forest"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      className="flex h-11 w-full items-center justify-center rounded-full bg-brand-forest text-sm font-semibold text-white transition hover:bg-brand-leaf"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleAdd(key, product);
+                      }}
+                    >
+                      ADD TO BAG
+                      <ArrowUpRight className="ml-2 h-4 w-4" />
+                    </div>
+                  )}
                 </div>
               </article>
             );

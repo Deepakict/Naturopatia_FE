@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight, CheckCircle, Shield, Star } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle, Minus, Plus, Shield, Star } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { useCart } from "@/components/layout/cart-context";
 
 type SizeOption = { label: string; price?: string; inStock?: boolean };
 
@@ -27,7 +28,8 @@ type ProductDetailProps = {
   };
 };
 
-export function ProductDetail({ product }: ProductDetailProps) {
+export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
+  const { addItem } = useCart();
   const gallery = useMemo(
     () => (product.gallery.length ? product.gallery : fallbackGallery),
     [product.gallery],
@@ -35,6 +37,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const [activeImage, setActiveImage] = useState(gallery[0]);
   const [activeSize, setActiveSize] = useState(product.sizes?.[0]?.label);
   const [activeHighlight, setActiveHighlight] = useState(0);
+  const [qty, setQty] = useState(1);
 
   return (
     <div className="flex flex-col gap-12">
@@ -163,11 +166,51 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </div>
           ) : null}
 
-          <div className="flex gap-3 pt-1">
-            <button className="flex h-11 items-center justify-center rounded-full bg-brand-forest px-6 text-sm font-semibold text-white shadow-md transition hover:bg-brand-leaf">
-              Add to bag
-              <ArrowUpRight className="ml-2 h-4 w-4" />
-            </button>
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            {added ? (
+              <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-brand-forest">
+                <button
+                  type="button"
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
+                >
+                  <Minus className="h-3 w-3" />
+                </button>
+                <span className="text-base font-semibold">{qty}</span>
+                <button
+                  type="button"
+                  onClick={() => setQty((q) => q + 1)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
+                >
+                  <Plus className="h-3 w-3" />
+                </button>
+              </div>
+            ) : (
+              <button
+                className="flex h-11 items-center justify-center rounded-full bg-brand-forest px-6 text-sm font-semibold text-white shadow-md transition hover:bg-brand-leaf"
+                onClick={() => {
+                  setAdded(true);
+                  addItem({
+                    id: product.title,
+                    name: product.title,
+                    price: product.price,
+                    size: product.sizes?.[0]?.label,
+                    image: product.gallery?.[0]?.src,
+                    quantity: qty,
+                  });
+                  onAddToCart?.({
+                    name: product.title,
+                    price: product.price,
+                    size: product.sizes?.[0]?.label,
+                    quantity: qty,
+                    image: product.gallery?.[0]?.src,
+                  });
+                }}
+              >
+                Add to bag
+                <ArrowUpRight className="ml-2 h-4 w-4" />
+              </button>
+            )}
             <button className="flex h-11 items-center justify-center rounded-full border border-brand-forest px-4 text-sm font-semibold text-brand-forest transition hover:bg-brand-forest hover:text-white">
               Subscribe & Save
             </button>

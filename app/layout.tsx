@@ -27,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background font-sans text-foreground antialiased",
           geistSans.variable,
