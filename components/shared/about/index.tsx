@@ -4,7 +4,6 @@ import { AboutTestimonials } from "./testimonials";
 import { TeamGrid } from "./team";
 import { HeroBanner } from "../common/hero-banner";
 import type { AboutPageProps } from "./types";
-import { NewsletterBanner } from "../common/newsletter-banner";
 import { Eyebrow } from "../common/eyebrow";
 import { AvailabilitySection } from "../common/availability";
 
@@ -30,7 +29,6 @@ export function AboutPage({
       <FounderSection founder={founder} />
       <TeamGrid team={team} />
       <AboutTestimonials testimonials={testimonials} />
-      <NewsletterBanner data={newsletter} variant="emerald" />
       <AvailabilitySection availability={availability} />
     </div>
   );
