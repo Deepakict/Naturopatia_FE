@@ -31,7 +31,7 @@ type ProductDetailProps = {
 };
 
 export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
-  const { addItem, items, updateQuantity } = useCart();
+  const { addItem, items, updateQuantity, removeItem } = useCart();
   const gallery = useMemo(
     () => (product.gallery.length ? product.gallery : fallbackGallery),
     [product.gallery],
@@ -49,6 +49,7 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
       setQty(cartItem.quantity);
       setAdded(true);
     } else {
+      setQty(1);
       setAdded(false);
     }
   }, [cartItem]);

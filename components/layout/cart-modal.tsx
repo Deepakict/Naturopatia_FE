@@ -16,9 +16,10 @@ type CartModalProps = {
   items: CartItem[];
   onUpdateQuantity?: (id: string, qty: number) => void;
   onRemove?: (id: string) => void;
+  onCheckout?: () => void;
 };
 
-export function CartModal({ open, onClose, items, onUpdateQuantity, onRemove }: CartModalProps) {
+export function CartModal({ open, onClose, items, onUpdateQuantity, onRemove, onCheckout }: CartModalProps) {
   if (!open) return null;
 
   const total = items.reduce((acc, item) => {
@@ -61,7 +62,7 @@ export function CartModal({ open, onClose, items, onUpdateQuantity, onRemove }: 
                     <span className="flex items-center gap-1 rounded-full border border-slate-200 px-2 py-1">
                       <button
                         type="button"
-                        onClick={() => onUpdateQuantity?.(item.id, Math.max(1, item.quantity - 1))}
+                        onClick={() => onUpdateQuantity?.(item.id, Math.max(0, item.quantity - 1))}
                         className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
                       >
                         <Minus className="h-3 w-3" />
@@ -98,7 +99,12 @@ export function CartModal({ open, onClose, items, onUpdateQuantity, onRemove }: 
             <span>${total.toFixed(2)}</span>
           </div>
           <p className="mt-1 text-xs text-slate-500">Taxes and shipping calculated at checkout</p>
-          <button className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-brand-forest text-sm font-semibold text-white transition hover:bg-brand-leaf">
+          <button
+            type="button"
+            aria-label="Checkout"
+            onClick={() => onCheckout?.()}
+            className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-brand-forest text-sm font-semibold text-white transition hover:bg-brand-leaf"
+          >
             Checkout
           </button>
         </div>

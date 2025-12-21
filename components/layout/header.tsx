@@ -3,7 +3,7 @@
 import { ShoppingBag, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -26,6 +26,7 @@ type HeaderProps = {
 
 export function Header({ className }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { items: cartItems, updateQuantity, removeItem } = useCart();
 
@@ -105,6 +106,10 @@ export function Header({ className }: HeaderProps) {
         items={cartItems}
         onUpdateQuantity={updateQuantity}
         onRemove={removeItem}
+        onCheckout={() => {
+          setIsCartOpen(false);
+          router.push("/checkout");
+        }}
       />
     </>
   );

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUpRight, Minus, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 import { cn } from "@/lib/utils";
 import { productsContent, type Product } from "@/lib/sections-content";
@@ -19,7 +19,7 @@ export function ProductsSection({
   products = productsContent,
   title = "Our Products",
 }: ProductsSectionProps) {
-  const { addItem, items: cartItems, updateQuantity } = useCart();
+  const { addItem, items: cartItems, updateQuantity, removeItem } = useCart();
   const initialQuantities = useMemo(() => {
     const map: Record<string, number> = {};
     products.forEach((p) => {
@@ -32,10 +32,28 @@ export function ProductsSection({
   const [quantities, setQuantities] = useState<Record<string, number>>(initialQuantities);
   const [added, setAdded] = useState<Record<string, boolean>>({});
 
+  // Keep `added` flags in sync with cart items: clear added state for items removed from cart elsewhere
+  useEffect(() => {
+    setAdded((prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach((k) => {
+        const inCart = cartItems.some((c) => c.id === k);
+        if (!inCart) next[k] = false;
+      });
+      return next;
+    });
+  }, [cartItems]);
+
   const updateQty = (key: string, delta: number) => {
     const cartItem = cartItems.find((item) => item.id === key);
     if (cartItem) {
-      updateQuantity(key, Math.max(1, cartItem.quantity + delta));
+      const newQty = cartItem.quantity + delta;
+      if (newQty <= 0) {
+        removeItem(key);
+        setAdded((prev) => ({ ...prev, [key]: false }));
+        return;
+      }
+      updateQuantity(key, newQty);
       return;
     }
     setQuantities((prev) => {
