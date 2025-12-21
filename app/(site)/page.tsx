@@ -8,55 +8,190 @@ import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-se
 import { CommunitySection } from "@/components/shared/sections/community-section";
 import { RetailersSection } from "@/components/shared/sections/retailers-section";
 import { homepageQueryOptions } from "@/lib/api/homepage";
+import type { CommunityTile as CommunityTileItem, IngredientsContent, Product as ProductCard, Retailer as RetailerCard } from "@/lib/sections-content";
+
+type MediaFormat = { url?: string; width?: number; height?: number };
+
+type MediaInput = {
+  url?: string;
+  width?: number;
+  height?: number;
+  mime?: string;
+  alternativeText?: string;
+  caption?: string;
+  formats?: {
+    large?: MediaFormat;
+    medium?: MediaFormat;
+    small?: MediaFormat;
+    thumbnail?: MediaFormat;
+  };
+};
+
+type RichTextChild = { text?: string };
+type RichTextBlock = { children?: RichTextChild[] };
+
+type HeroSection = {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string | RichTextBlock[];
+  heroImage?: MediaInput[] | MediaInput;
+  primaryCtaLabel?: string;
+  primaryCtaUrl?: string;
+};
+
+type SizeType = { size?: string | number; price?: number; isStock?: boolean };
+
+type OurProduct = {
+  title?: string;
+  gallery?: MediaInput[];
+  rating?: number | string;
+  defaultPrice?: number;
+  price?: number | string;
+  sizeType?: SizeType[];
+  size?: string | number;
+  compareAtPrice?: number;
+  badge?: string;
+  inStock?: boolean;
+  limitedEdition?: boolean;
+  slug?: string;
+  documentId?: string;
+  reviewsCount?: number;
+  reviews?: number;
+};
+
+type TestimonialItem = {
+  headline?: string;
+  quote?: string;
+  name?: string;
+  location?: string;
+  rating?: number | string;
+  avatar?: MediaInput[] | MediaInput;
+};
+
+type CommunityCard = {
+  images?: MediaInput;
+  ctaLabel?: string;
+  ctaUrl?: string;
+};
+
+type Retailer = {
+  title?: string;
+  name?: string;
+  icon?: MediaInput;
+  logo?: MediaInput;
+};
+
+type RetailerSection = {
+  retailer?: Retailer[];
+  retailers?: Retailer[];
+  eyebrow?: string;
+  eyeBrow?: string;
+  title?: string;
+};
+
+type ProductSectionContent = {
+  article?: {
+    cover?: MediaInput;
+    richText?: string;
+    title?: string;
+  };
+  tag?: string;
+  title?: string;
+  ctaLabel?: string;
+};
+
+type NewsletterContent = {
+  eyebrow?: string;
+  title?: string;
+  description?: string | RichTextBlock[];
+  inputPlaceholder?: string;
+  buttonLabel?: string;
+  background?: MediaInput;
+};
+
+type ChooseUsItem = {
+  title?: string;
+  description?: string;
+  icon?: MediaInput;
+};
+
+type ChooseUsContent = {
+  eyebrows?: string;
+  title?: string;
+  hero?: MediaInput[] | MediaInput;
+  ChooseUsItems?: ChooseUsItem[];
+};
+
+type HomepageAttributes = {
+  HeroSection?: HeroSection | HeroSection[];
+  OurProductSection?: { productTitle?: string; products?: OurProduct[] };
+  TestimonialSection?: { testimonialsHeading?: string; Testimonials?: TestimonialItem[]; testimonials?: TestimonialItem[] };
+  CommunitySection?: { CommunityCards?: CommunityCard[] };
+  RetailerSection?: RetailerSection;
+  RetailersSection?: RetailerSection;
+  retailersSection?: RetailerSection;
+  ProductSection?: ProductSectionContent;
+  NewsletterSection?: NewsletterContent;
+  ChooseUsSection?: ChooseUsContent | ChooseUsContent[];
+};
+
+type StrapiEntity<T> = { attributes?: T } & T;
+
+function toArray<T>(value?: T | T[] | null): T[] {
+  return Array.isArray(value) ? value : value ? [value] : [];
+}
+
+const buildMediaUrl = (baseUrl: string, media?: MediaInput | null): string | undefined => {
+  if (!media) return undefined;
+  return (
+    (media.formats?.large?.url && `${baseUrl}${media.formats.large.url}`) ||
+    (media.formats?.medium?.url && `${baseUrl}${media.formats.medium.url}`) ||
+    (media.formats?.small?.url && `${baseUrl}${media.formats.small.url}`) ||
+    (media.url && `${baseUrl}${media.url}`) ||
+    undefined
+  );
+};
+
+const textFromRichBlocks = (blocks?: RichTextBlock[] | string | null): string | undefined => {
+  if (typeof blocks === "string") return blocks;
+  if (!Array.isArray(blocks) || !blocks.length) return undefined;
+  const joined = blocks
+    .map((block) => (Array.isArray(block.children) ? block.children.map((child) => child?.text ?? "").join(" ") : ""))
+    .join(" ")
+    .trim();
+  return joined || undefined;
+};
 
 export default async function Home() {
   const queryClient = new QueryClient();
 
   const homepageData = await queryClient.ensureQueryData(homepageQueryOptions());
-  const attributes = (homepageData?.data as any)?.attributes ?? (homepageData?.data as any);
+  const homepageEntity = homepageData?.data as StrapiEntity<HomepageAttributes> | undefined;
+  const attributes: HomepageAttributes = homepageEntity?.attributes ?? (homepageEntity ?? {});
   const heroEntry = attributes?.HeroSection;
-  const heroArray = Array.isArray(heroEntry) ? heroEntry : heroEntry ? [heroEntry] : [];
+  const heroArray = toArray(heroEntry);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:1337";
   const heroSlides =
-    heroArray.map((item: any) => {
-      const img = Array.isArray(item?.heroImage) ? item.heroImage[0] : item?.heroImage?.[0];
-      const imageUrl =
-        (img?.formats?.large?.url && `${baseUrl}${img.formats.large.url}`) ||
-        (img?.url && `${baseUrl}${img.url}`) ||
-        undefined;
-
-      const subtitle =
-        item?.subtitle && Array.isArray(item.subtitle)
-          ? item.subtitle
-              .map((node: any) => {
-                if (node?.children && Array.isArray(node.children)) {
-                  return node.children.map((child: any) => child?.text ?? "").join(" ");
-                }
-                return "";
-              })
-              .join(" ")
-              .trim()
-          : undefined;
+    heroArray.map((item) => {
+      const img = toArray(item?.heroImage)[0];
+      const imageUrl = buildMediaUrl(baseUrl, img);
+      const subtitle = textFromRichBlocks(item?.subtitle);
 
       return {
         eyebrow: item?.eyebrow ?? undefined,
         title: item?.title ?? undefined,
-        description: subtitle || undefined,
+        description: subtitle,
         imageUrl,
         ctaLabel: item?.primaryCtaLabel ?? "Shop Now",
         ctaHref: item?.primaryCtaUrl ?? undefined,
       };
-    }) ?? [];
+    });
 
   const ourProductsSection = attributes?.OurProductSection;
-  const ourProducts =
-    ourProductsSection?.products?.map((product: any) => {
-      const img = Array.isArray(product?.gallery) ? product.gallery[0] : undefined;
-      const image =
-        (img?.formats?.large?.url && `${baseUrl}${img.formats.large.url}`) ||
-        (img?.formats?.medium?.url && `${baseUrl}${img.formats.medium.url}`) ||
-        (img?.url && `${baseUrl}${img.url}`) ||
-        undefined;
+  const ourProducts: ProductCard[] | undefined =
+    ourProductsSection?.products?.map((product): ProductCard => {
+      const img = toArray(product?.gallery)[0];
+      const image = buildMediaUrl(baseUrl, img);
       const ratingValue =
         typeof product?.rating === "number" ? product.rating : Number(product?.rating ?? 0) || 0;
       const priceValue =
@@ -64,13 +199,15 @@ export default async function Home() {
           ? product.defaultPrice
           : typeof product?.price === "number"
             ? product.price
-            : product?.sizeType?.[0]?.price ?? undefined;
+            : typeof product?.price === "string"
+              ? Number(product.price)
+              : product?.sizeType?.[0]?.price ?? undefined;
       const sizeRaw = product?.sizeType?.[0]?.size ?? product?.size ?? "";
       const sizeLabel = sizeRaw ? `${sizeRaw}${Number.isFinite(Number(sizeRaw)) ? " ml" : ""}` : undefined;
       return {
         name: product?.title ?? "Product",
         image,
-        price: typeof priceValue === "number" ? `₹${priceValue}` : product?.price ?? undefined,
+        price: typeof priceValue === "number" ? `₹${priceValue}` : typeof product?.price === "string" ? product.price : undefined,
         originalPrice:
           typeof product?.compareAtPrice === "number" ? `₹${product.compareAtPrice}` : undefined,
         rating: ratingValue || 5,
@@ -86,116 +223,93 @@ export default async function Home() {
 
   const testimonialSection = attributes?.TestimonialSection;
   const testimonialItems =
-    (testimonialSection?.Testimonials ?? testimonialSection?.testimonials ?? [])?.map((item: any) => {
-      const avatar = Array.isArray(item?.avatar) ? item.avatar[0] : item?.avatar?.[0];
-      const image =
-        (avatar?.formats?.medium?.url && `${baseUrl}${avatar.formats.medium.url}`) ||
-        (avatar?.url && `${baseUrl}${avatar.url}`) ||
-        undefined;
-      return {
-        title: item?.headline ?? "",
-        quote: item?.quote ?? "",
-        name: item?.name ?? "",
-        location: item?.location ?? "",
-        rating: typeof item?.rating === "number" ? item.rating : Number(item?.rating ?? 0) || 5,
-        image,
-      };
-    }) || undefined;
+    (testimonialSection?.Testimonials ?? testimonialSection?.testimonials ?? [])
+      ?.map((item) => {
+        const avatar = toArray(item?.avatar)[0];
+        const image = buildMediaUrl(baseUrl, avatar) ??
+          (avatar?.formats?.medium?.url ? `${baseUrl}${avatar.formats.medium.url}` : undefined);
+        return {
+          title: item?.headline ?? "",
+          quote: item?.quote ?? "",
+          name: item?.name ?? "",
+          location: item?.location ?? "",
+          rating: typeof item?.rating === "number" ? item.rating : Number(item?.rating ?? 0) || 5,
+          image,
+        };
+      }) || undefined;
 
-  const communityTiles =
-    attributes?.CommunitySection?.CommunityCards?.map((card: any) => {
-      const img = card?.images;
-      const image =
-        (img?.formats?.large?.url && `${baseUrl}${img.formats.large.url}`) ||
-        (img?.url && `${baseUrl}${img.url}`) ||
-        undefined;
+  const communityTilesArray =
+    attributes?.CommunitySection?.CommunityCards?.map((card): CommunityTileItem | null => {
+      const image = buildMediaUrl(baseUrl, card?.images);
+      if (!image) return null;
       return {
         image,
-        ctaLabel: card?.ctaLabel ?? undefined,
-        ctaHref: card?.ctaUrl ?? undefined,
+        ctaLabel: card?.ctaLabel,
+        ctaHref: card?.ctaUrl,
       };
-    }) || undefined;
+    }) || [];
+  const communityTiles: CommunityTileItem[] | undefined = communityTilesArray.filter(
+    (tile): tile is CommunityTileItem => Boolean(tile),
+  );
 
   const retailerSection =
     attributes?.RetailerSection ?? attributes?.RetailersSection ?? attributes?.retailersSection;
-  const retailerItems =
+  const retailerItemsArray =
     (retailerSection?.retailer ?? retailerSection?.retailers)
-      ?.map((retailer: any) => {
+      ?.map((retailer) => {
         const logo = retailer?.icon ?? retailer?.logo;
         const logoUrl =
-          (logo?.url && `${baseUrl}${logo.url}`) ||
-          (logo?.formats?.large?.url && `${baseUrl}${logo.formats.large.url}`) ||
-          (logo?.formats?.medium?.url && `${baseUrl}${logo.formats.medium.url}`) ||
-          (logo?.formats?.small?.url && `${baseUrl}${logo.formats.small.url}`) ||
-          undefined;
+          buildMediaUrl(baseUrl, logo) ||
+          (logo?.formats?.small?.url ? `${baseUrl}${logo.formats.small.url}` : undefined);
         if (!logoUrl) return null;
+        const width = logo?.width ?? logo?.formats?.large?.width ?? 180;
+        const height = logo?.height ?? logo?.formats?.large?.height ?? 60;
         return {
           name: retailer?.title ?? retailer?.name ?? "Retailer",
           logo: logoUrl,
-          width: logo?.width ?? logo?.formats?.large?.width ?? 180,
-          height: logo?.height ?? logo?.formats?.large?.height ?? 60,
-        };
+          width,
+          height,
+        } satisfies RetailerCard;
       })
-      .filter(Boolean) || undefined;
+      .filter((retailer): retailer is RetailerCard => Boolean(retailer)) || [];
+  const retailerItems: RetailerCard[] | undefined = retailerItemsArray.length
+    ? retailerItemsArray
+    : undefined;
 
   const productSection = attributes?.ProductSection;
   const productArticle = productSection?.article;
   const productCover = productArticle?.cover;
-  const coverImage =
-    (productCover?.formats?.large?.url && `${baseUrl}${productCover.formats.large.url}`) ||
-    (productCover?.formats?.medium?.url && `${baseUrl}${productCover.formats.medium.url}`) ||
-    (productCover?.url && `${baseUrl}${productCover.url}`) ||
-    undefined;
+  const coverImage = buildMediaUrl(baseUrl, productCover);
+  const fallbackCover = "https://placehold.co/800x600?text=Product";
 
   const richText = (productArticle?.richText as string | undefined) ?? "";
   const richLines = richText.split("\n").map((line) => line.trim()).filter(Boolean);
   const bulletLines = richLines.filter((line) => line.startsWith("-")).map((line) => line.replace(/^-\\s*/, ""));
   const bodyLines = richLines.filter((line) => !line.startsWith("-"));
 
-  const productHighlightContent = {
+  const productHighlightContent: IngredientsContent = {
     eyebrow: productSection?.tag ?? "Ingredients",
     heading: productArticle?.title ?? productSection?.title ?? "Powered by Nature's Best",
     body: bodyLines.join(" "),
     bullets: bulletLines.length ? bulletLines : ["No fillers.", "No chemicals.", "Just nature's finest."],
     ctaLabel: productSection?.ctaLabel ?? "Shop Now",
-    image: coverImage,
+    image: coverImage ?? fallbackCover,
   };
   const newsletter = attributes?.NewsletterSection;
   const newsletterBg = newsletter?.background;
-  const newsletterBgUrl =
-    (newsletterBg?.url && `${baseUrl}${newsletterBg.url}`) ||
-    (newsletterBg?.formats?.large?.url && `${baseUrl}${newsletterBg.formats.large.url}`) ||
-    undefined;
-  const newsletterDescription =
-    Array.isArray(newsletter?.description) && newsletter.description.length
-      ? newsletter.description
-          .map((block: any) =>
-            Array.isArray(block?.children)
-              ? block.children.map((child: any) => child?.text ?? "").join(" ")
-              : "",
-          )
-          .join(" ")
-          .trim()
-      : undefined;
+  const newsletterBgUrl = buildMediaUrl(baseUrl, newsletterBg);
+  const newsletterDescription = textFromRichBlocks(newsletter?.description) ?? undefined;
 
   const chooseUsRaw = Array.isArray(attributes?.ChooseUsSection)
     ? attributes.ChooseUsSection[0]
     : attributes?.ChooseUsSection;
-  const chooseUsHeroMedia = Array.isArray(chooseUsRaw?.hero) ? chooseUsRaw.hero[0] : chooseUsRaw?.hero?.[0];
-  const chooseUsHero =
-    (chooseUsHeroMedia?.formats?.large?.url && `${baseUrl}${chooseUsHeroMedia.formats.large.url}`) ||
-    (chooseUsHeroMedia?.formats?.medium?.url && `${baseUrl}${chooseUsHeroMedia.formats.medium.url}`) ||
-    (chooseUsHeroMedia?.url && `${baseUrl}${chooseUsHeroMedia.url}`) ||
-    undefined;
+  const chooseUsHero = buildMediaUrl(baseUrl, toArray(chooseUsRaw?.hero)[0]);
 
   const chooseUsItems =
-    chooseUsRaw?.ChooseUsItems?.map((item: any) => ({
+    chooseUsRaw?.ChooseUsItems?.map((item) => ({
       title: item?.title ?? "",
       description: item?.description ?? "",
-      icon:
-        (item?.icon?.url && `${baseUrl}${item.icon.url}`) ||
-        (item?.icon?.formats?.thumbnail?.url && `${baseUrl}${item.icon.formats.thumbnail.url}`) ||
-        undefined,
+      icon: buildMediaUrl(baseUrl, item?.icon),
     })) ?? undefined;
 
   return (

@@ -5,6 +5,122 @@ import { ProductsSection } from "@/components/shared/sections/products-section";
 import { RetailersSection } from "@/components/shared/sections/retailers-section";
 import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-section";
 import { ourProductQueryOptions } from "@/lib/api/our-product";
+import type { Product as ProductCard, Retailer as RetailerCard } from "@/lib/sections-content";
+
+type MediaFormat = { url?: string; width?: number; height?: number };
+
+type MediaInput = {
+  url?: string;
+  width?: number;
+  height?: number;
+  mime?: string;
+  alternativeText?: string;
+  caption?: string;
+  formats?: {
+    large?: MediaFormat;
+    medium?: MediaFormat;
+    small?: MediaFormat;
+  };
+};
+
+type RichTextChild = { text?: string };
+type RichTextBlock = { children?: RichTextChild[] };
+
+type HeroSection = {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string | RichTextBlock[];
+  heroImage?: MediaInput[] | MediaInput;
+  primaryCtaLabel?: string;
+  primaryCtaUrl?: string;
+};
+
+type SizeType = { size?: string | number; price?: number };
+
+type OurProduct = {
+  title?: string;
+  gallery?: MediaInput[];
+  rating?: number | string;
+  defaultPrice?: number;
+  sizeType?: SizeType[];
+  size?: string | number;
+  compareAtPrice?: number;
+  badge?: string;
+  inStock?: boolean;
+  limitedEdition?: boolean;
+  slug?: string;
+  documentId?: string;
+  reviewsCount?: number;
+  reviews?: number;
+};
+
+type ArticleEntry = {
+  title?: string;
+  description?: string;
+  publishedAt?: string;
+  createdAt?: string;
+  category?: { name?: string };
+  cover?: MediaInput;
+};
+
+type NewsletterContent = {
+  eyebrow?: string;
+  title?: string;
+  description?: string | RichTextBlock[];
+  inputPlaceholder?: string;
+  buttonLabel?: string;
+  background?: MediaInput;
+};
+
+type Retailer = {
+  title?: string;
+  name?: string;
+  icon?: MediaInput;
+  logo?: MediaInput;
+};
+
+type RetailerSection = {
+  retailer?: Retailer[];
+  eyebrow?: string;
+  title?: string;
+};
+
+type OurProductAttributes = {
+  HeroSection?: HeroSection | HeroSection[];
+  products?: OurProduct[];
+  productsTitle?: string;
+  articles?: ArticleEntry[];
+  newLetterSection?: NewsletterContent;
+  RetailersSection?: RetailerSection;
+  RetailerSection?: RetailerSection;
+};
+
+type StrapiEntity<T> = { attributes?: T } & T;
+
+function toArray<T>(value?: T | T[] | null): T[] {
+  return Array.isArray(value) ? value : value ? [value] : [];
+}
+
+const buildMediaUrl = (baseUrl: string, media?: MediaInput | null): string | undefined => {
+  if (!media) return undefined;
+  return (
+    (media.formats?.large?.url && `${baseUrl}${media.formats.large.url}`) ||
+    (media.formats?.medium?.url && `${baseUrl}${media.formats.medium.url}`) ||
+    (media.formats?.small?.url && `${baseUrl}${media.formats.small.url}`) ||
+    (media.url && `${baseUrl}${media.url}`) ||
+    undefined
+  );
+};
+
+const textFromRichBlocks = (blocks?: RichTextBlock[] | string | null): string | undefined => {
+  if (typeof blocks === "string") return blocks;
+  if (!Array.isArray(blocks) || !blocks.length) return undefined;
+  const joined = blocks
+    .map((block) => (Array.isArray(block.children) ? block.children.map((child) => child?.text ?? "").join(" ") : ""))
+    .join(" ")
+    .trim();
+  return joined || undefined;
+};
 
 function formatDate(dateString?: string) {
   if (!dateString) return "";
@@ -16,52 +132,33 @@ function formatDate(dateString?: string) {
 export default async function OurProductPage() {
   const queryClient = new QueryClient();
   const ourProductData = await queryClient.ensureQueryData(ourProductQueryOptions());
-  const attributes = (ourProductData?.data as any)?.attributes ?? (ourProductData?.data as any);
+  const attributesEntity = ourProductData?.data as StrapiEntity<OurProductAttributes> | undefined;
+  const attributes: OurProductAttributes = attributesEntity?.attributes ?? (attributesEntity ?? {});
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
   const heroEntry = attributes?.HeroSection;
-  const heroArray = Array.isArray(heroEntry) ? heroEntry : heroEntry ? [heroEntry] : [];
-  const heroSlides =
-    heroArray.map((item: any) => {
-      const img = Array.isArray(item?.heroImage) ? item.heroImage[0] : item?.heroImage?.[0];
-      const imageUrl =
-        (img?.formats?.large?.url && `${baseUrl}${img.formats.large.url}`) ||
-        (img?.url && `${baseUrl}${img.url}`) ||
-        undefined;
+  const heroArray = toArray(heroEntry);
+  const heroSlides = heroArray.map((item) => {
+    const img = toArray(item?.heroImage)[0];
+    const imageUrl = buildMediaUrl(baseUrl, img);
+    const subtitle = textFromRichBlocks(item?.subtitle);
 
-      const subtitle =
-        item?.subtitle && Array.isArray(item.subtitle)
-          ? item.subtitle
-              .map((node: any) => {
-                if (node?.children && Array.isArray(node.children)) {
-                  return node.children.map((child: any) => child?.text ?? "").join(" ");
-                }
-                return "";
-              })
-              .join(" ")
-              .trim()
-          : undefined;
-
-      return {
-        eyebrow: item?.eyebrow ?? undefined,
-        title: item?.title ?? undefined,
-        description: subtitle || undefined,
-        imageUrl,
-        ctaLabel: item?.primaryCtaLabel ?? "Shop Now",
-        ctaHref: item?.primaryCtaUrl ?? undefined,
-      };
-    }) ?? [];
+    return {
+      eyebrow: item?.eyebrow ?? undefined,
+      title: item?.title ?? undefined,
+      description: subtitle,
+      imageUrl,
+      ctaLabel: item?.primaryCtaLabel ?? "Shop Now",
+      ctaHref: item?.primaryCtaUrl ?? undefined,
+    };
+  });
 
   const productEntries = attributes?.products;
-  const ourProducts =
-    productEntries?.map((product: any) => {
-      const img = Array.isArray(product?.gallery) ? product.gallery[0] : undefined;
-      const image =
-        (img?.formats?.large?.url && `${baseUrl}${img.formats.large.url}`) ||
-        (img?.formats?.medium?.url && `${baseUrl}${img.formats.medium.url}`) ||
-        (img?.url && `${baseUrl}${img.url}`) ||
-        undefined;
+  const ourProducts: ProductCard[] | undefined =
+    productEntries?.map((product): ProductCard => {
+      const img = toArray(product?.gallery)[0];
+      const image = buildMediaUrl(baseUrl, img);
       const ratingValue =
         typeof product?.rating === "number" ? product.rating : Number(product?.rating ?? 0) || 0;
       const priceValue =
@@ -92,13 +189,9 @@ export default async function OurProductPage() {
 
   const articleEntries = attributes?.articles ?? [];
   const articleCards =
-    articleEntries?.map((article: any) => {
+    articleEntries?.map((article) => {
       const cover = article?.cover;
-      const coverUrl =
-        (cover?.formats?.large?.url && `${baseUrl}${cover.formats.large.url}`) ||
-        (cover?.formats?.medium?.url && `${baseUrl}${cover.formats.medium.url}`) ||
-        (cover?.url && `${baseUrl}${cover.url}`) ||
-        undefined;
+      const coverUrl = buildMediaUrl(baseUrl, cover) ?? "https://placehold.co/800x600?text=Article";
       const date = formatDate(article?.publishedAt ?? article?.createdAt);
       return {
         title: article?.title ?? "Article",
@@ -111,41 +204,29 @@ export default async function OurProductPage() {
 
   const newsletter = attributes?.newLetterSection;
   const newsletterBg = newsletter?.background;
-  const newsletterBgUrl =
-    (newsletterBg?.url && `${baseUrl}${newsletterBg.url}`) ||
-    (newsletterBg?.formats?.large?.url && `${baseUrl}${newsletterBg.formats.large.url}`) ||
-    undefined;
-  const newsletterDescription =
-    Array.isArray(newsletter?.description) && newsletter.description.length
-      ? newsletter.description
-          .map((block: any) =>
-            Array.isArray(block?.children)
-              ? block.children.map((child: any) => child?.text ?? "").join(" ")
-              : "",
-          )
-          .join(" ")
-          .trim()
-      : undefined;
+  const newsletterBgUrl = buildMediaUrl(baseUrl, newsletterBg);
+  const newsletterDescription = textFromRichBlocks(newsletter?.description);
 
   const retailerSection = attributes?.RetailersSection ?? attributes?.RetailerSection;
-  const retailerItems =
+  const retailerItemsArray =
     retailerSection?.retailer
-      ?.map((retailer: any) => {
+      ?.map((retailer) => {
         const logo = retailer?.icon ?? retailer?.logo;
-        const logoUrl =
-          (logo?.url && `${baseUrl}${logo.url}`) ||
-          (logo?.formats?.large?.url && `${baseUrl}${logo.formats.large.url}`) ||
-          (logo?.formats?.medium?.url && `${baseUrl}${logo.formats.medium.url}`) ||
-          undefined;
+        const logoUrl = buildMediaUrl(baseUrl, logo);
         if (!logoUrl) return null;
+        const width = logo?.width ?? logo?.formats?.large?.width ?? 180;
+        const height = logo?.height ?? logo?.formats?.large?.height ?? 60;
         return {
           name: retailer?.title ?? retailer?.name ?? "Retailer",
           logo: logoUrl,
-          width: logo?.width ?? 180,
-          height: logo?.height ?? 60,
-        };
+          width,
+          height,
+        } satisfies RetailerCard;
       })
-      .filter(Boolean) || undefined;
+      .filter((retailer): retailer is RetailerCard => Boolean(retailer)) || [];
+  const retailerItems: RetailerCard[] | undefined = retailerItemsArray.length
+    ? retailerItemsArray
+    : undefined;
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

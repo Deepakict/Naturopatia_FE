@@ -8,22 +8,100 @@ import { RetailersSection } from "@/components/shared/sections/retailers-section
 import { contactQueryOptions } from "@/lib/api/contact";
 import type { Retailer } from "@/lib/sections-content";
 
-function buildMediaUrl(baseUrl: string, media?: any): string | undefined {
+type MediaFormat = { url?: string; width?: number; height?: number };
+
+type MediaInput = {
+  url?: string;
+  width?: number;
+  height?: number;
+  mime?: string;
+  alternativeText?: string;
+  caption?: string;
+  formats?: {
+    large?: MediaFormat;
+    medium?: MediaFormat;
+    small?: MediaFormat;
+  };
+  data?: { attributes?: MediaInput };
+  attributes?: MediaInput;
+  file?: MediaInput;
+};
+
+type RichTextChild = { text?: string };
+type RichTextBlock = { children?: RichTextChild[] };
+
+type ContactFormContent = {
+  title?: string;
+  sectionHeading?: string;
+  subtitle?: string;
+  description?: string;
+  hero?: MediaInput;
+  inputFirstNameLabel?: string;
+  inputLastNameLabel?: string;
+  inputEmailLabel?: string;
+  inputMessageLabel?: string;
+  buttonLabel?: string;
+};
+
+type FAQEntry = { question?: string; answer?: string; title?: string; description?: string };
+
+type SupportItem = { label?: string; value?: string; contact?: string; email?: string; note?: string; description?: string };
+
+type NewsletterContent = {
+  eyebrow?: string;
+  title?: string;
+  description?: string | RichTextBlock[];
+  inputPlaceholder?: string;
+  buttonLabel?: string;
+  background?: MediaInput;
+};
+
+type RetailerSection = {
+  retailer?: { title?: string; name?: string; icon?: MediaInput; logo?: MediaInput }[];
+  eyeBrow?: string;
+  eyebrow?: string;
+  title?: string;
+};
+
+type ContactAttributes = {
+  contactForm?: ContactFormContent;
+  faq?: { faqItem?: FAQEntry[] };
+  support?: { contactSupport?: { description?: string }; supportItem?: SupportItem[] };
+  newLetterSection?: NewsletterContent;
+  retailersSection?: RetailerSection;
+  RetailersSection?: RetailerSection;
+  RetailerSection?: RetailerSection;
+};
+
+type StrapiEntity<T> = { attributes?: T } & T;
+
+const buildMediaUrl = (baseUrl: string, media?: MediaInput | null): string | undefined => {
   if (!media) return undefined;
-  const m = media?.data?.attributes ?? media?.attributes ?? media;
+  const m = media.data?.attributes ?? media.attributes ?? media.file ?? media;
   return (
     (m?.formats?.large?.url && `${baseUrl}${m.formats.large.url}`) ||
     (m?.formats?.medium?.url && `${baseUrl}${m.formats.medium.url}`) ||
+    (m?.formats?.small?.url && `${baseUrl}${m.formats.small.url}`) ||
     (m?.url && `${baseUrl}${m.url}`) ||
     undefined
   );
-}
+};
+
+const textFromRichBlocks = (blocks?: RichTextBlock[] | string | null): string | undefined => {
+  if (typeof blocks === "string") return blocks;
+  if (!Array.isArray(blocks) || !blocks.length) return undefined;
+  const joined = blocks
+    .map((block) => (Array.isArray(block.children) ? block.children.map((child) => child?.text ?? "").join(" ") : ""))
+    .join(" ")
+    .trim();
+  return joined || undefined;
+};
 
 export default async function Contact() {
   const queryClient = new QueryClient();
   const contactData = await queryClient.ensureQueryData(contactQueryOptions());
-
-  const attributes = (contactData?.data as any)?.attributes ?? (contactData?.data as any);
+  const contactEntity = contactData?.data as StrapiEntity<ContactAttributes> | undefined;
+  const attributes: ContactAttributes = contactEntity?.attributes ?? (contactEntity ?? {});
   const baseUrl =
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:1337";
 
@@ -45,7 +123,7 @@ export default async function Contact() {
   };
 
   const faqs: FAQItem[] =
-    attributes?.faq?.faqItem?.map((item: any) => ({
+    attributes?.faq?.faqItem?.map((item) => ({
       question: item?.question ?? item?.title ?? "Question",
       answer: item?.answer ?? item?.description ?? "",
     })) ?? [];
@@ -55,7 +133,7 @@ export default async function Contact() {
     ? attributes.support.supportItem
     : [];
   const support: SupportChannel[] =
-    supportItemsRaw.map((item: any) => ({
+    supportItemsRaw.map((item) => ({
       label: item?.label ?? "Support",
       value: item?.value ?? item?.contact ?? item?.email ?? "",
       description: item?.note ?? item?.description ?? supportHeader?.description ?? "",
@@ -65,24 +143,14 @@ export default async function Contact() {
   const newsletter = attributes?.newLetterSection;
   const newsletterBg = newsletter?.background;
   const newsletterBgUrl = buildMediaUrl(baseUrl, newsletterBg);
-  const newsletterDescription =
-    Array.isArray(newsletter?.description) && newsletter.description.length
-      ? newsletter.description
-        .map((block: any) =>
-          Array.isArray(block?.children)
-            ? block.children.map((child: any) => child?.text ?? "").join(" ")
-            : "",
-        )
-        .join(" ")
-        .trim()
-      : undefined;
+  const newsletterDescription = textFromRichBlocks(newsletter?.description);
 
 
   const retailerSection =
     attributes?.retailersSection ?? attributes?.RetailersSection ?? attributes?.RetailerSection;
-  const retailerItems: Retailer[] | undefined =
+  const retailerItemsArray =
     retailerSection?.retailer
-      ?.map((retailer: any) => {
+      ?.map((retailer) => {
         const logo = retailer?.icon ?? retailer?.logo;
         const logoUrl = buildMediaUrl(baseUrl, logo);
         if (!logoUrl) return null;
@@ -91,9 +159,10 @@ export default async function Contact() {
           logo: logoUrl,
           width: logo?.width ?? 180,
           height: logo?.height ?? 60,
-        };
+        } satisfies Retailer;
       })
-      .filter(Boolean) as Retailer[] | undefined;
+      .filter((r): r is Retailer => Boolean(r)) || [];
+  const retailerItems: Retailer[] | undefined = retailerItemsArray.length ? retailerItemsArray : undefined;
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

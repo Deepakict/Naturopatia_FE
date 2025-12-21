@@ -9,11 +9,89 @@ import { ourProductQueryOptions } from "@/lib/api/our-product";
 import { productQueryOptions } from "@/lib/api/product";
 import type { Product } from "@/lib/sections-content";
 
+type MediaFormat = { url?: string };
+
+type MediaInput = {
+  url?: string;
+  alternativeText?: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  mime?: string;
+  formats?: {
+    large?: MediaFormat;
+    medium?: MediaFormat;
+  };
+  data?: { attributes?: MediaInput };
+  attributes?: MediaInput;
+};
+
+type SizeType = { size?: string | number; price?: number; isStock?: boolean };
+
+type ProductListItem = { title?: string; description?: string };
+
+type ProductAttributes = {
+  id?: string;
+  slug?: string;
+  documentId?: string;
+  title?: string;
+  defaultPrice?: number;
+  compareAtPrice?: number;
+  rating?: number;
+  reviewsCount?: number;
+  badge?: string;
+  limitedEdition?: boolean;
+  bestSellers?: boolean;
+  inStock?: boolean;
+  size?: string | number;
+  gallery?: { data?: MediaInput[] } | MediaInput[];
+  sizeType?: SizeType[];
+  description?: string | string[];
+  productList?: ProductListItem[];
+};
+
+type ProductEntry = {
+  id?: string;
+  attributes?: ProductAttributes;
+} & ProductAttributes;
+
+type RichTextChild = { text?: string };
+type RichTextBlock = { children?: RichTextChild[] };
+
+type Retailer = {
+  title?: string;
+  name?: string;
+  icon?: MediaInput;
+  logo?: MediaInput;
+};
+
+type RetailerSectionContent = {
+  retailer?: Retailer[];
+  eyebrow?: string;
+  title?: string;
+};
+
+type NewsletterContent = {
+  eyebrow?: string;
+  title?: string;
+  description?: string | RichTextBlock[];
+  inputPlaceholder?: string;
+  buttonLabel?: string;
+  background?: MediaInput;
+};
+
+type OurProductsAttributes = {
+  newLetterSection?: NewsletterContent;
+  RetailersSection?: RetailerSectionContent;
+  RetailerSection?: RetailerSectionContent;
+  products?: ProductAttributes[];
+};
+
 type PageProps = {
   params: { slug: string } | Promise<{ slug: string }>;
 };
 
-function buildMediaUrl(baseUrl: string, media?: any): string | undefined {
+function buildMediaUrl(baseUrl: string, media?: MediaInput): string | undefined {
   if (!media) return undefined;
   const m = media?.data?.attributes ?? media?.attributes ?? media;
   return (
@@ -40,22 +118,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
     queryClient.ensureQueryData(ourProductQueryOptions()),
   ]);
 
-  const productEntryRaw = productData?.data;
+  const productEntryRaw = productData?.data as ProductEntry | ProductEntry[] | undefined;
   const productEntry = Array.isArray(productEntryRaw) ? productEntryRaw[0] : productEntryRaw;
-  const productAttr = (productEntry?.attributes as any) ?? productEntry ?? {};
+  const productAttr: ProductAttributes = productEntry?.attributes ?? productEntry ?? {};
 
   if (!productEntry) {
     notFound();
   }
 
-  const galleryMedia = Array.isArray(productAttr?.gallery?.data)
-    ? productAttr.gallery.data
-    : Array.isArray(productAttr?.gallery)
-      ? productAttr.gallery
+  const gallerySource = productAttr?.gallery;
+  const galleryMedia: MediaInput[] = Array.isArray(gallerySource)
+    ? gallerySource
+    : gallerySource && "data" in gallerySource && Array.isArray(gallerySource.data)
+      ? gallerySource.data ?? []
       : [];
-  const gallery =
+  const gallery: { src: string; alt: string }[] =
     galleryMedia
-      .map((img: any) => {
+      .map((img: MediaInput) => {
         const src = buildMediaUrl(baseUrl, img);
         if (!src) return null;
         const altSource =
@@ -68,14 +147,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
           alt: altSource ?? productAttr?.title ?? "Product image",
         };
       })
-      .filter(Boolean) || [];
+      .filter((img): img is { src: string; alt: string } => Boolean(img)) || [];
 
-  const sizeOptions =
-    productAttr?.sizeType?.map((s: any) => ({
-      label: s?.size ? `${s.size}${Number.isFinite(Number(s.size)) ? " ml" : ""}` : undefined,
-      price: typeof s?.price === "number" ? `₹${s.price}` : undefined,
-      inStock: s?.isStock ?? true,
-    })) ?? [];
+  const sizeOptions: { label: string; price: string | undefined; inStock: boolean }[] =
+    (productAttr?.sizeType ?? [])
+      .map((s) => {
+        if (s?.size === undefined || s?.size === null) return null;
+        const label = `${s.size}${Number.isFinite(Number(s.size)) ? " ml" : ""}`;
+        const price = typeof s?.price === "number" ? `₹${s.price}` : undefined;
+        return {
+          label,
+          price,
+          inStock: s?.isStock ?? true,
+        };
+      })
+      .filter(
+        (s): s is { label: string; price: string | undefined; inStock: boolean } => Boolean(s),
+      );
 
   const descriptionText =
     typeof productAttr?.description === "string"
@@ -85,7 +173,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         : undefined;
 
   const highlights =
-    productAttr?.productList?.map((item: any) => ({
+    productAttr?.productList?.map((item) => ({
       title: item?.title ?? "",
       body: item?.description ?? "",
     })) ?? [];
@@ -106,34 +194,41 @@ export default async function ProductDetailPage({ params }: PageProps) {
     badge: productAttr?.badge ?? (productAttr?.inStock ? "In Stock!" : undefined),
     limited: productAttr?.limitedEdition ? "Limited Edition" : undefined,
     bestSeller: productAttr?.bestSellers ?? false,
-    gallery: gallery.filter((g: any) => g.src),
-    sizes: sizeOptions.filter((s: any) => s.label),
+    gallery: gallery.filter((g) => g.src),
+    sizes: sizeOptions,
     description: descriptionText,
     highlights,
     shippingNote:
       "For orders shipped within your region, please allow 3 to 7 business days for delivery.",
   };
 
-  const attributes = (ourProductsData?.data as any)?.attributes ?? (ourProductsData?.data as any);
+  const attributesSource = ourProductsData?.data as OurProductsAttributes | { attributes?: OurProductsAttributes } | undefined;
+  const attributes: OurProductsAttributes =
+    attributesSource && typeof attributesSource === "object" && "attributes" in attributesSource
+      ? (attributesSource as { attributes?: OurProductsAttributes }).attributes ?? {}
+      : (attributesSource as OurProductsAttributes) ?? {};
+
   const newsletter = attributes?.newLetterSection;
   const newsletterBg = newsletter?.background;
   const newsletterBgUrl = buildMediaUrl(baseUrl, newsletterBg);
   const newsletterDescription =
     Array.isArray(newsletter?.description) && newsletter.description.length
       ? newsletter.description
-          .map((block: any) =>
+          .map((block) =>
             Array.isArray(block?.children)
-              ? block.children.map((child: any) => child?.text ?? "").join(" ")
+              ? block.children.map((child) => child?.text ?? "").join(" ")
               : "",
           )
           .join(" ")
-          .trim()
-      : undefined;
+          .trim() || undefined
+      : typeof newsletter?.description === "string"
+        ? newsletter.description
+        : undefined;
 
   const retailerSection = attributes?.RetailersSection ?? attributes?.RetailerSection;
   const retailerItems =
     retailerSection?.retailer
-      ?.map((retailer: any) => {
+      ?.map((retailer) => {
         const logo = retailer?.icon ?? retailer?.logo;
         const logoUrl = buildMediaUrl(baseUrl, logo);
         if (!logoUrl) return null;
@@ -144,14 +239,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
           height: logo?.height ?? 60,
         };
       })
-      .filter(Boolean) || undefined;
+      .filter(
+        (retailer): retailer is { name: string; logo: string; width: number; height: number } =>
+          Boolean(retailer),
+      ) ||
+    undefined;
 
   const allProducts = Array.isArray(attributes?.products) ? attributes.products : [];
   const relatedProducts: Product[] =
     allProducts
-      .filter((p: any) => (p?.slug ?? p?.documentId) !== slug)
+      .filter((p) => (p?.slug ?? p?.documentId) !== slug)
       .slice(0, 4)
-      .map((product: any) => {
+      .map((product) => {
         const img = Array.isArray(product?.gallery) ? product.gallery[0] : undefined;
         const image = buildMediaUrl(baseUrl, img);
         const priceValue =

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, ArrowUpRight, CheckCircle, Minus, Plus, Shield, Star } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { useCart } from "@/components/layout/cart-context";
@@ -31,7 +31,7 @@ type ProductDetailProps = {
 };
 
 export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
-  const { addItem, items, updateQuantity, removeItem } = useCart();
+  const { addItem, items, updateQuantity } = useCart();
   const gallery = useMemo(
     () => (product.gallery.length ? product.gallery : fallbackGallery),
     [product.gallery],
@@ -39,20 +39,11 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
   const [activeImage, setActiveImage] = useState(gallery[0]);
   const [activeSize, setActiveSize] = useState(product.sizes?.[0]?.label);
   const [activeHighlight, setActiveHighlight] = useState(0);
-  const [qty, setQty] = useState(1);
-  const [added, setAdded] = useState(false);
+  const qty = 1;
   const productId = product.id ?? product.title;
   const cartItem = items.find((i) => i.id === productId);
-
-  useEffect(() => {
-    if (cartItem) {
-      setQty(cartItem.quantity);
-      setAdded(true);
-    } else {
-      setQty(1);
-      setAdded(false);
-    }
-  }, [cartItem]);
+  const added = Boolean(cartItem);
+  const displayQty = cartItem?.quantity ?? qty;
 
   return (
     <div className="flex flex-col gap-12">
@@ -187,20 +178,18 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    const next = Math.max(1, qty - 1);
-                    setQty(next);
+                    const next = Math.max(1, displayQty - 1);
                     updateQuantity(productId, next);
                   }}
                   className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
                 >
                   <Minus className="h-3 w-3" />
                 </button>
-                <span className="text-base font-semibold">{qty}</span>
+                <span className="text-base font-semibold">{displayQty}</span>
                 <button
                   type="button"
                   onClick={() => {
-                    const next = qty + 1;
-                    setQty(next);
+                    const next = displayQty + 1;
                     updateQuantity(productId, next);
                   }}
                   className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
@@ -212,19 +201,18 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
               <button
                 className="flex h-11 items-center justify-center rounded-full bg-brand-forest px-6 text-sm font-semibold text-white shadow-md transition hover:bg-brand-leaf"
                 onClick={() => {
-                  setAdded(true);
                   addItem({
                     id: productId,
                     name: product.title,
                     price: product.price,
-                    size: product.sizes?.[0]?.label,
+                    size: activeSize,
                     image: product.gallery?.[0]?.src,
                     quantity: qty,
                   });
                   onAddToCart?.({
                     name: product.title,
                     price: product.price,
-                    size: product.sizes?.[0]?.label,
+                    size: activeSize,
                     quantity: qty,
                     image: product.gallery?.[0]?.src,
                   });
