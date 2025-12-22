@@ -16,9 +16,9 @@ export default function MarketingLayout({
 
         {/* <main className="relative z-10 mx-auto flex max-w-[1440px] flex-col px-4  sm:px-8">
           {children}
-        </main>
+        </main> */}
 
-        <Footer /> */}
+        <Footer />
       </div>
     </CartProvider>
   );

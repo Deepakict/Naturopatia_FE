@@ -270,7 +270,7 @@ export default async function Home() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      {/* <>
+      <>
         <HeroCarousel slides={heroSlides} />
         <ProductsSection
           title={ourProductsSection?.productTitle ?? "Our Products"}
@@ -302,7 +302,7 @@ export default async function Home() {
           eyebrow={retailerSection?.eyebrow ?? retailerSection?.eyeBrow}
           title={retailerSection?.title}
         />
-      </> */}
+      </>
     </HydrationBoundary>
   );
 }
