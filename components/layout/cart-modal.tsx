@@ -5,8 +5,8 @@ export type CartItem = {
   id: string;
   name: string;
   size?: string;
-  price: string;
-  image: string;
+  price?: string;
+  image?: string;
   quantity: number;
 };
 
@@ -48,7 +48,7 @@ export function CartModal({ open, onClose, items, onUpdateQuantity, onRemove, on
               <div key={item.id} className="grid grid-cols-[92px_1fr_auto] items-center gap-4">
                 <div className="relative h-24 w-20 overflow-hidden rounded-2xl bg-slate-100">
                   <Image
-                    src={item.image}
+                    src={item.image ?? "/logos/logo.svg"}
                     alt={item.name}
                     fill
                     className="object-cover"

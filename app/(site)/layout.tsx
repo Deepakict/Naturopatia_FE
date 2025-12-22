@@ -14,11 +14,11 @@ export default function MarketingLayout({
         <CouponBar className="relative z-10" />
         <Header className="relative z-10" />
 
-        <main className="relative z-10 mx-auto flex max-w-[1440px] flex-col px-4  sm:px-8">
+        {/* <main className="relative z-10 mx-auto flex max-w-[1440px] flex-col px-4  sm:px-8">
           {children}
         </main>
 
-        <Footer />
+        <Footer /> */}
       </div>
     </CartProvider>
   );
