@@ -6,25 +6,8 @@ import { RetailersSection } from "@/components/shared/sections/retailers-section
 import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-section";
 import { ourProductQueryOptions } from "@/lib/api/our-product";
 import type { Product as ProductCard, Retailer as RetailerCard } from "@/lib/sections-content";
-
-type MediaFormat = { url?: string; width?: number; height?: number };
-
-type MediaInput = {
-  url?: string;
-  width?: number;
-  height?: number;
-  mime?: string;
-  alternativeText?: string;
-  caption?: string;
-  formats?: {
-    large?: MediaFormat;
-    medium?: MediaFormat;
-    small?: MediaFormat;
-  };
-};
-
-type RichTextChild = { text?: string };
-type RichTextBlock = { children?: RichTextChild[] };
+import { buildMediaUrl, textFromRichBlocks, toArray } from "@/lib/utils/content";
+import type { MediaInput, RichTextBlock, StrapiEntity } from "@/lib/types/content";
 
 type HeroSection = {
   eyebrow?: string;
@@ -95,32 +78,6 @@ type OurProductAttributes = {
   RetailerSection?: RetailerSection;
 };
 
-type StrapiEntity<T> = { attributes?: T } & T;
-
-function toArray<T>(value?: T | T[] | null): T[] {
-  return Array.isArray(value) ? value : value ? [value] : [];
-}
-
-const buildMediaUrl = (baseUrl: string, media?: MediaInput | null): string | undefined => {
-  if (!media) return undefined;
-  return (
-    (media.formats?.large?.url && `${baseUrl}${media.formats.large.url}`) ||
-    (media.formats?.medium?.url && `${baseUrl}${media.formats.medium.url}`) ||
-    (media.formats?.small?.url && `${baseUrl}${media.formats.small.url}`) ||
-    (media.url && `${baseUrl}${media.url}`) ||
-    undefined
-  );
-};
-
-const textFromRichBlocks = (blocks?: RichTextBlock[] | string | null): string | undefined => {
-  if (typeof blocks === "string") return blocks;
-  if (!Array.isArray(blocks) || !blocks.length) return undefined;
-  const joined = blocks
-    .map((block) => (Array.isArray(block.children) ? block.children.map((child) => child?.text ?? "").join(" ") : ""))
-    .join(" ")
-    .trim();
-  return joined || undefined;
-};
 
 function formatDate(dateString?: string) {
   if (!dateString) return "";

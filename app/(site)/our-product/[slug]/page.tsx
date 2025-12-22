@@ -8,23 +8,8 @@ import { ProductsSection } from "@/components/shared/sections/products-section";
 import { ourProductQueryOptions } from "@/lib/api/our-product";
 import { productQueryOptions } from "@/lib/api/product";
 import type { Product } from "@/lib/sections-content";
-
-type MediaFormat = { url?: string };
-
-type MediaInput = {
-  url?: string;
-  alternativeText?: string;
-  caption?: string;
-  width?: number;
-  height?: number;
-  mime?: string;
-  formats?: {
-    large?: MediaFormat;
-    medium?: MediaFormat;
-  };
-  data?: { attributes?: MediaInput };
-  attributes?: MediaInput;
-};
+import { buildMediaUrl, textFromRichBlocks, toArray } from "@/lib/utils/content";
+import type { MediaInput, RichTextBlock, StrapiEntity } from "@/lib/types/content";
 
 type SizeType = { size?: string | number; price?: number; isStock?: boolean };
 
@@ -54,9 +39,6 @@ type ProductEntry = {
   id?: string;
   attributes?: ProductAttributes;
 } & ProductAttributes;
-
-type RichTextChild = { text?: string };
-type RichTextBlock = { children?: RichTextChild[] };
 
 type Retailer = {
   title?: string;
@@ -90,17 +72,6 @@ type OurProductsAttributes = {
 type PageProps = {
   params: { slug: string } | Promise<{ slug: string }>;
 };
-
-function buildMediaUrl(baseUrl: string, media?: MediaInput): string | undefined {
-  if (!media) return undefined;
-  const m = media?.data?.attributes ?? media?.attributes ?? media;
-  return (
-    (m?.formats?.large?.url && `${baseUrl}${m.formats.large.url}`) ||
-    (m?.formats?.medium?.url && `${baseUrl}${m.formats.medium.url}`) ||
-    (m?.url && `${baseUrl}${m.url}`) ||
-    undefined
-  );
-}
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const queryClient = new QueryClient();

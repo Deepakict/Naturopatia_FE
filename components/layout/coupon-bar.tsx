@@ -1,6 +1,10 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import {
+  CaptionRegular,
+  CaptionRegularSemiBold,
+} from "../shared/typography";
 
 type CouponBarProps = {
   className?: string;
@@ -20,23 +24,22 @@ export function CouponBar({
         className,
       )}
     >
-      <div className="container flex items-center justify-between gap-6 px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em]">
+      <div className="container flex h-[74.271px] max-w-[1440px] items-center justify-center gap-[10px] px-[21px] py-[26px]">
         <button
           type="button"
           aria-label="Previous offer"
           className="rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-6 w-6" />
         </button>
 
-        <div className="flex flex-wrap items-center justify-center gap-2 text-center text-[13px] font-semibold">
-          <span>{message}</span>
-          <a
-            href="#"
-            className="text-xs font-semibold normal-case underline underline-offset-4 hover:text-slate-200"
-          >
+        <div className="flex flex-1 flex-wrap items-center justify-center gap-[10px] text-center">
+          <CaptionRegularSemiBold className="font-sans text-[16px] font-semibold leading-[140%] text-white">
+            {message}
+          </CaptionRegularSemiBold>
+          <CaptionRegular className="font-sans text-[16px] font-normal leading-[140%] text-white underline hover:text-slate-200">
             {linkLabel}
-          </a>
+          </CaptionRegular>
         </div>
 
         <button
@@ -44,7 +47,7 @@ export function CouponBar({
           aria-label="Next offer"
           className="rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-6 w-6" />
         </button>
       </div>
     </div>

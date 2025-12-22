@@ -7,28 +7,9 @@ import { NewsLetterSection } from "@/components/shared/sections/cta-subscribe-se
 import { RetailersSection } from "@/components/shared/sections/retailers-section";
 import { contactQueryOptions } from "@/lib/api/contact";
 import type { Retailer } from "@/lib/sections-content";
+import { buildMediaUrl, textFromRichBlocks } from "@/lib/utils/content";
+import type { MediaInput, RichTextBlock, StrapiEntity } from "@/lib/types/content";
 
-type MediaFormat = { url?: string; width?: number; height?: number };
-
-type MediaInput = {
-  url?: string;
-  width?: number;
-  height?: number;
-  mime?: string;
-  alternativeText?: string;
-  caption?: string;
-  formats?: {
-    large?: MediaFormat;
-    medium?: MediaFormat;
-    small?: MediaFormat;
-  };
-  data?: { attributes?: MediaInput };
-  attributes?: MediaInput;
-  file?: MediaInput;
-};
-
-type RichTextChild = { text?: string };
-type RichTextBlock = { children?: RichTextChild[] };
 
 type ContactFormContent = {
   title?: string;
@@ -73,29 +54,6 @@ type ContactAttributes = {
   RetailerSection?: RetailerSection;
 };
 
-type StrapiEntity<T> = { attributes?: T } & T;
-
-const buildMediaUrl = (baseUrl: string, media?: MediaInput | null): string | undefined => {
-  if (!media) return undefined;
-  const m = media.data?.attributes ?? media.attributes ?? media.file ?? media;
-  return (
-    (m?.formats?.large?.url && `${baseUrl}${m.formats.large.url}`) ||
-    (m?.formats?.medium?.url && `${baseUrl}${m.formats.medium.url}`) ||
-    (m?.formats?.small?.url && `${baseUrl}${m.formats.small.url}`) ||
-    (m?.url && `${baseUrl}${m.url}`) ||
-    undefined
-  );
-};
-
-const textFromRichBlocks = (blocks?: RichTextBlock[] | string | null): string | undefined => {
-  if (typeof blocks === "string") return blocks;
-  if (!Array.isArray(blocks) || !blocks.length) return undefined;
-  const joined = blocks
-    .map((block) => (Array.isArray(block.children) ? block.children.map((child) => child?.text ?? "").join(" ") : ""))
-    .join(" ")
-    .trim();
-  return joined || undefined;
-};
 
 export default async function Contact() {
   const queryClient = new QueryClient();
