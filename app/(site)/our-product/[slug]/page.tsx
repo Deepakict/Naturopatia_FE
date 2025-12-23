@@ -8,10 +8,23 @@ import { ProductsSection } from "@/components/shared/sections/products-section";
 import { ourProductQueryOptions } from "@/lib/api/our-product";
 import { productQueryOptions } from "@/lib/api/product";
 import type { Product } from "@/lib/sections-content";
-import { buildMediaUrl, textFromRichBlocks, toArray } from "@/lib/utils/content";
-import type { MediaInput, RichTextBlock, StrapiEntity } from "@/lib/types/content";
+import { buildMediaUrl } from "@/lib/utils/content";
+import type { MediaInput, RichTextBlock } from "@/lib/types/content";
 
 type SizeType = { size?: string | number; price?: number; isStock?: boolean };
+
+type WhatOnItItem = {
+  id?: string | number;
+  title?: string;
+  description?: string;
+  icon?: MediaInput;
+};
+
+type ProductItemGroup = {
+  id?: string | number;
+  eyebrow?: string;
+  what_on_it_items?: WhatOnItItem[];
+};
 
 type ProductListItem = { title?: string; description?: string };
 
@@ -33,6 +46,7 @@ type ProductAttributes = {
   sizeType?: SizeType[];
   description?: string | string[];
   productList?: ProductListItem[];
+  items?: ProductItemGroup[];
 };
 
 type ProductEntry = {
@@ -149,6 +163,43 @@ export default async function ProductDetailPage({ params }: PageProps) {
       body: item?.description ?? "",
     })) ?? [];
 
+  const whatOnProduct =
+    productAttr?.items
+      ?.map((group) => {
+        const items =
+          group?.what_on_it_items
+            ?.map((entry) => {
+              const iconUrl = buildMediaUrl(baseUrl, entry?.icon);
+
+              return {
+                id: entry?.id ?? entry?.title,
+                title: entry?.title ?? "",
+                description: entry?.description ?? "",
+                icon: iconUrl
+                  ? {
+                      src: iconUrl,
+                      alt:
+                        entry?.icon?.alternativeText ??
+                        entry?.title ??
+                        "Item icon",
+                      width: entry?.icon?.width,
+                      height: entry?.icon?.height,
+                    }
+                  : undefined,
+              };
+            })
+            .filter((entry) => entry && (entry.title || entry.description || entry.icon?.src)) ?? [];
+
+        if (!items.length) return null;
+
+        return {
+          id: group?.id ?? group?.eyebrow ?? items[0]?.id,
+          eyebrow: group?.eyebrow,
+          items,
+        };
+      })
+      .filter((group): group is NonNullable<typeof group> => Boolean(group)) ?? [];
+
   const productDetailData = {
     id: productAttr?.slug ?? productAttr?.documentId ?? String(productAttr?.id ?? productAttr?.title),
     title: productAttr?.title ?? "Product",
@@ -169,9 +220,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
     sizes: sizeOptions,
     description: descriptionText,
     highlights,
+    whatOnProduct,
     shippingNote:
       "For orders shipped within your region, please allow 3 to 7 business days for delivery.",
   };
+
+
 
   const attributesSource = ourProductsData?.data as OurProductsAttributes | { attributes?: OurProductsAttributes } | undefined;
   const attributes: OurProductsAttributes =
@@ -187,7 +241,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       ? newsletter.description
           .map((block) =>
             Array.isArray(block?.children)
-              ? block.children.map((child) => child?.text ?? "").join(" ")
+              ? block.children.map((child: { text?: string }) => child?.text ?? "").join(" ")
               : "",
           )
           .join(" ")

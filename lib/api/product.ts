@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 
 const PRODUCT_POPULATE_QUERY =
-  "populate[gallery]=true&populate[productCategory]=true&populate[productList][populate][icon]=true&populate[sizeType]=true";
+  "populate[gallery]=true&populate[productCategory]=true&populate[productList][populate][icon]=true&populate[sizeType]=true&populate[items][populate][what_on_it_items][populate][icon]=true";
 
 export async function fetchProduct(slugOrId: string) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:1337";
