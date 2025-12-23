@@ -283,8 +283,9 @@ export default async function Home() {
           heroImage={chooseUsHero}
           features={chooseUsItems}
         />
-          {/* 
+        
         <ProductHighlightSection content={productHighlightContent} />
+          {/* 
         <TestimonialsSection
           heading={testimonialSection?.testimonialsHeading}
           testimonials={testimonialItems}
