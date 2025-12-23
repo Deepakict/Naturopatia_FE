@@ -11,7 +11,13 @@ export type StrapiMedia = {
 
 export type HomePageAttributes = {
   HeroSection?: { title?: string | null; subtitle?: string | null; heroImage?: StrapiMedia };
-  PhilosophySection?: { title?: string | null };
+  PhilosophySection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    ctaLabel?: string | null;
+    ctaLink?: string | null;
+    images?: StrapiMedia | StrapiMedia[] | null;
+  };
   OurProductSection?: { title?: string | null };
   ProductSection?: { title?: string | null };
   ChooseUsSection?: { title?: string | null };
@@ -19,6 +25,14 @@ export type HomePageAttributes = {
   CommunitySection?: { title?: string | null };
   TestimonialSection?: { title?: string | null };
   RetailerSection?: { title?: string | null };
+  founderSection?: {
+    eyebrows?: string | null;
+    title?: string | null;
+    description?: string | null;
+    ctaUrl?: string | null;
+    ctaLabel?: string | null;
+    image?: StrapiMedia | StrapiMedia[] | null;
+  };
 };
 
 export type HomePageResponse = {
@@ -27,7 +41,7 @@ export type HomePageResponse = {
 };
 
 const HOMEPAGE_POPULATE_QUERY =
-  "populate[HeroSection][populate][heroImage]=true&populate[PhilosophySection][populate][images]=true&populate[PhilosophySection][populate][PhilosophyItems][populate][icon]=true&populate[OurProductSection][populate][products][populate][gallery]=true&populate[ProductSection][populate][cover]=true&populate[ProductSection][populate][article][populate]=*&populate[ChooseUsSection][populate][hero]=true&populate[ChooseUsSection][populate][ChooseUsItems][populate][icon]=true&populate[NewsletterSection][populate][background]=true&populate[CommunitySection][populate][CommunityCards][populate][images]=true&populate[TestimonialSection][populate][testimonials][populate][avatar]=true&populate[RetailerSection][populate][retailer][populate][icon]=true";
+  "populate[HeroSection][populate][heroImage]=true&populate[HeroSection][populate][InfoItems][populate][icon]=true&populate[PhilosophySection][populate][images]=true&populate[OurProductSection][populate][products][populate][gallery]=true&populate[ProductSection][populate][cover]=true&populate[ProductSection][populate][article][populate]=*&populate[ChooseUsSection][populate][hero]=true&populate[ChooseUsSection][populate][ChooseUsItems][populate][icon]=true&populate[NewsletterSection][populate][background]=true&populate[CommunitySection][populate][CommunityCards][populate][images]=true&populate[TestimonialSection][populate][testimonials][populate][avatar]=true&populate[RetailerSection][populate][retailer][populate][icon]=true&populate[founderSection][populate][image]=true";
 
 export async function fetchHomePage(): Promise<HomePageResponse> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:1337";

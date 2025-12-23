@@ -1,6 +1,8 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { HeroCarousel } from "@/components/shared/sections/hero-carousel";
 import { ProductsSection } from "@/components/shared/sections/products-section";
+import { PhilosophySection } from "@/components/shared/sections/philosophy-section";
+import { FounderSection } from "@/components/shared/sections/founder-section";
 import { WhyChooseUS } from "@/components/shared/sections/difference-section";
 import { ProductHighlightSection } from "@/components/shared/sections/ingredients-section";
 import { TestimonialsSection } from "@/components/shared/sections/testimonials-section";
@@ -104,6 +106,23 @@ type ChooseUsContent = {
   ChooseUsItems?: ChooseUsItem[];
 };
 
+type PhilosophyContent = {
+  eyebrow?: string;
+  headline?: string;
+  ctaLabel?: string;
+  ctaLink?: string | null;
+  images?: MediaInput[] | MediaInput;
+};
+
+type FounderContent = {
+  eyebrows?: string;
+  title?: string;
+  description?: string;
+  ctaUrl?: string | null;
+  ctaLabel?: string | null;
+  image?: MediaInput[] | MediaInput;
+};
+
 type HomepageAttributes = {
   HeroSection?: HeroSection | HeroSection[];
   OurProductSection?: { productTitle?: string; products?: OurProduct[] };
@@ -115,6 +134,8 @@ type HomepageAttributes = {
   ProductSection?: ProductSectionContent;
   NewsletterSection?: NewsletterContent;
   ChooseUsSection?: ChooseUsContent | ChooseUsContent[];
+  PhilosophySection?: PhilosophyContent;
+  founderSection?: FounderContent;
 };
 
 
@@ -268,6 +289,12 @@ export default async function Home() {
       icon: buildMediaUrl(baseUrl, item?.icon),
     })) ?? undefined;
 
+  const philosophy = attributes?.PhilosophySection;
+  const philosophyImage = buildMediaUrl(baseUrl, toArray(philosophy?.images)?.[0]);
+
+  const founder = attributes?.founderSection;
+  const founderImage = buildMediaUrl(baseUrl, toArray(founder?.image)?.[0]);
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <>
@@ -276,6 +303,7 @@ export default async function Home() {
           title={ourProductsSection?.productTitle ?? "Our Products"}
           products={ourProducts}
         />
+
       
         <WhyChooseUS
           eyebrow={chooseUsRaw?.eyebrows}
@@ -285,11 +313,34 @@ export default async function Home() {
         />
         
         <ProductHighlightSection content={productHighlightContent} />
+
+       
        
         <TestimonialsSection
           heading={testimonialSection?.testimonialsHeading}
           testimonials={testimonialItems}
         />
+
+          {philosophy ? (
+          <PhilosophySection
+            eyebrow={philosophy?.eyebrow}
+            headline={philosophy?.headline}
+            ctaLabel={philosophy?.ctaLabel}
+            ctaHref={philosophy?.ctaLink ?? undefined}
+            backgroundUrl={philosophyImage ?? undefined}
+          />
+        ) : null}
+
+         {founder ? (
+          <FounderSection
+            eyebrow={founder.eyebrows}
+            title={founder.title}
+            description={founder.description}
+            ctaLabel={founder.ctaLabel ?? undefined}
+            ctaHref={founder.ctaUrl ?? undefined}
+            imageUrl={founderImage ?? undefined}
+          />
+        ) : null}
            {/* 
         <NewsLetterSection
           eyebrow={newsletter?.eyebrow}
