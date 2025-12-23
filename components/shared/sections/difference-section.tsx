@@ -22,15 +22,15 @@ function renderIcon(icon?: string | Feature["icon"]) {
   if (typeof icon === "string" && icon) {
     return (
       <span
-        className="block h-6 w-6 bg-contain bg-center bg-no-repeat"
+        className="block h-8 w-8 bg-contain bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${icon})` }}
         aria-hidden="true"
       />
     );
   }
-  if (icon === "sun") return <Sun className="h-6 w-6" />;
-  if (icon === "droplets") return <Droplets className="h-6 w-6" />;
-  return <Leaf className="h-6 w-6" />;
+  if (icon === "sun") return <Sun className="h-8 w-8" />;
+  if (icon === "droplets") return <Droplets className="h-8 w-8" />;
+  return <Leaf className="h-8 w-8" />;
 }
 
 export function WhyChooseUS({
@@ -48,44 +48,44 @@ export function WhyChooseUS({
   return (
     <section
       className={cn(
-        "flex h-[900px] w-full items-center gap-3 self-stretch py-10",
+        "flex w-full items-center self-stretch px-4 py-10 sm:px-6 lg:h-[900px] lg:px-0",
         className,
       )}
     >
-      <div className="mx-auto grid w-full items-stretch gap-8 rounded-[32px] bg-transparent lg:grid-cols-[1.05fr_1fr]">
-        <div className="overflow-hidden rounded-[32px] bg-white">
+      <div className="mx-auto grid w-full items-stretch gap-8 rounded-[32px] bg-transparent sm:gap-10 lg:grid-cols-[1.05fr_1fr]">
+        <div className="relative flex min-h-[280px] flex-1 overflow-hidden rounded-[32px] sm:min-h-[320px] lg:min-h-[360px]">
           <div
-            className="aspect-[4/5] min-h-[360px] w-full bg-cover bg-center"
+            className="h-[320px] w-full flex-1 rounded-[32px] bg-cover bg-center sm:h-[420px] md:h-[520px] lg:h-[800px]"
             style={{
-              backgroundImage: `url('${displayHero}')`,
+              background: `url('${displayHero}') center / cover no-repeat, #DDDE92`,
             }}
           />
         </div>
 
-        <div className="flex min-h-[360px] flex-col justify-between gap-8 rounded-[32px] bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex min-h-[360px] w-full flex-1 flex-col items-start justify-between gap-6 self-stretch rounded-[32px] bg-white p-6 shadow-sm sm:gap-8 sm:p-10 lg:p-20">
           <div className="space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <p className="self-stretch font-[500] font-['Inter_Tight'] text-[14px] leading-[20px] text-[#9CA8A5] sm:text-[16px] sm:leading-[22px] md:text-[18px] md:leading-[26px]">
               {eyebrowText}
             </p>
-            <h2 className="text-3xl font-semibold leading-tight text-brand-forest sm:text-4xl">
+            <h2 className="self-stretch font-['Optima'] text-[32px] font-[550] leading-[38.4px] text-brand-forest sm:text-[40px] sm:leading-[48px] lg:text-[48px] lg:leading-[57.6px]">
               {headingText}
             </h2>
           </div>
 
-          <div className="divide-y divide-slate-200/80">
+          <div className="flex flex-col items-start gap-5 self-stretch sm:gap-6">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="flex items-start gap-4 py-4 first:pt-0 last:pb-0"
+                className="flex items-start gap-4 self-stretch"
               >
-                <div className="mt-1 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-brand-forest">
+                <div className="mt-1 flex h-12 w-12 items-center justify-center rounded-[24px] border border-[#E7EAE9] bg-white p-2 text-brand-forest">
                   {renderIcon(feature.icon)}
                 </div>
                 <div className="space-y-1">
-                  <p className="text-base font-semibold text-brand-forest">
+                  <p className="font-['Optima'] text-[18px] font-[550] leading-[25.2px] text-brand-forest sm:text-[20px] sm:leading-[28px]">
                     {feature.title}
                   </p>
-                  <p className="text-sm leading-relaxed text-slate-600">
+                  <p className="self-stretch font-['Inter_Tight'] text-[15px] font-normal leading-[22px] text-[#6E7F7B] sm:text-[16px] sm:leading-[24px]">
                     {feature.description}
                   </p>
                 </div>
