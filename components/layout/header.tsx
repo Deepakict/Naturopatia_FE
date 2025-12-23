@@ -436,6 +436,18 @@ export function Header({ className }: HeaderProps) {
                   })}
                 </div>
               ) : null}
+
+              <div className="flex w-full justify-center">
+                <Link
+                  href="/our-product"
+                  className="mt-2 inline-flex items-center gap-2 rounded-full border border-brand-forest px-5 py-3 text-sm font-semibold text-brand-forest transition hover:bg-brand-forest hover:text-white"
+                  onClick={() => setIsShopOpen(false)}
+                  style={{ fontFamily: "Inter Tight" }}
+                >
+                  View More Products
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
