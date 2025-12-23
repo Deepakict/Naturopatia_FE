@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUpRight, Minus, Plus } from "lucide-react";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { productsContent, type Product } from "@/lib/sections-content";
@@ -30,19 +30,6 @@ export function ProductsSection({
   }, [products]);
 
   const [quantities, setQuantities] = useState<Record<string, number>>(initialQuantities);
-  const [added, setAdded] = useState<Record<string, boolean>>({});
-
-  // Keep `added` flags in sync with cart items: clear added state for items removed from cart elsewhere
-  useEffect(() => {
-    setAdded((prev) => {
-      const next = { ...prev };
-      Object.keys(next).forEach((k) => {
-        const inCart = cartItems.some((c) => c.id === k);
-        if (!inCart) next[k] = false;
-      });
-      return next;
-    });
-  }, [cartItems]);
 
   const updateQty = (key: string, delta: number) => {
     const cartItem = cartItems.find((item) => item.id === key);
@@ -50,7 +37,6 @@ export function ProductsSection({
       const newQty = cartItem.quantity + delta;
       if (newQty <= 0) {
         removeItem(key);
-        setAdded((prev) => ({ ...prev, [key]: false }));
         return;
       }
       updateQuantity(key, newQty);
@@ -67,7 +53,6 @@ export function ProductsSection({
 
   const handleAdd = (key: string, product: Product) => {
     const qty = quantities[key] ?? 1;
-    setAdded((prev) => ({ ...prev, [key]: true }));
     addItem({
       id: product.slug ?? product.documentId ?? product.name,
       name: product.name,
@@ -79,17 +64,33 @@ export function ProductsSection({
   };
 
   return (
-    <section className={cn("w-full px-6 py-16 sm:px-12 lg:px-16", className)}>
-      <div className="mx-auto flex max-w-[1440px] flex-col gap-10">
-        <h2 className="text-4xl font-semibold text-brand-forest sm:text-[44px]">{title}</h2>
+    <section
+      className={cn(
+        "inline-flex w-full flex-col items-start justify-center gap-[56px] bg-[#F1F3F3] py-[120px]",
+        className,
+      )}
+    >
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10">
+        <h2
+          className="text-[48px] font-[550] leading-[1.2] text-[color:var(--Brand-Deep-Forest-Green,#1D3A34)]"
+          style={{ fontFamily: "Optima" }}
+        >
+          {title}
+        </h2>
 
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {products.map((product) => {
             const price = product.price ?? "";
             const originalPrice = product.originalPrice;
             const size = product.sizeLabel;
             const badge = product.badgeLabel;
             const limited = product.limitedLabel;
+            const numericPrice = price ? Number((price as string).replace(/[^0-9.]/g, "")) : undefined;
+            const computedOriginal =
+              originalPrice ??
+              (numericPrice !== undefined && !Number.isNaN(numericPrice)
+                ? `${price?.trim()?.startsWith("$") ? "$" : ""}${(numericPrice * 1.1).toFixed(0)}`
+                : undefined);
             const href =
               product.slug || product.documentId
                 ? `/our-product/${product.slug ?? product.documentId}`
@@ -97,18 +98,21 @@ export function ProductsSection({
             const key = product.slug ?? product.documentId ?? product.name;
             const cartItem = cartItems.find((item) => item.id === key);
             const qty = cartItem?.quantity ?? quantities[key] ?? 1;
-            const isAdded = cartItem ? true : added[key] ?? false;
+            const isAdded = Boolean(cartItem);
 
             const Card = (
-              <article className="group relative flex h-full flex-col gap-4 rounded-[28px] bg-[#F6F8F8] p-4 transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="relative w-full overflow-hidden rounded-[22px] bg-white shadow-sm">
+              <article className="group relative flex h-full flex-col gap-4 rounded-[28px]  p-4 transition hover:-translate-y-1">
+                <div className="relative w-full overflow-hidden rounded-[22px]">
                   <div
-                    className="aspect-[4/5] w-full bg-cover bg-center"
-                    style={{ backgroundImage: `url(${product.image})` }}
+                    className="mx-auto h-[340px] w-full max-w-[320px] bg-cover bg-center sm:h-[420px] sm:max-w-[360px] lg:h-[486.4px] lg:max-w-[394px]"
+                    style={{ backgroundImage: `url(${product.image})`, aspectRatio: "394 / 486.4" }}
                   />
                   {badge ? (
                     product.badgeTone === "success" ? (
-                      <div className="absolute -right-14 top-6 w-40 rotate-45 bg-[#DF382C] px-6 py-2 text-center text-xs font-semibold uppercase tracking-[0.08em] text-white shadow-md">
+                      <div
+                        className="absolute -right-14 top-6 w-40 rotate-45 bg-[#E5210E] px-6 py-2 text-center text-[20px] font-[400] leading-[28px] text-white"
+                        style={{ fontFamily: "Optima" }}
+                      >
                         {badge}
                       </div>
                     ) : (
@@ -124,8 +128,9 @@ export function ProductsSection({
                   ) : null}
                   {limited ? (
                     <div
-                      className="absolute bottom-0 left-0 w-full rounded-b-[22px] px-4 py-2.5 text-center text-sm font-semibold uppercase tracking-wide text-white"
+                      className="absolute bottom-5 left-1/2 h-[58px] w-[394px] -translate-x-1/2 rounded-b-[22px] px-4 py-3 text-center text-[24px] font-[400] leading-[33.6px] text-white"
                       style={{
+                        fontFamily: "Optima",
                         backgroundColor: "#1e5b4e",
                         backgroundImage:
                           "linear-gradient(120deg, rgba(255,255,255,0.08) 18%, transparent 18%), linear-gradient(240deg, rgba(255,255,255,0.08) 18%, transparent 18%)",
@@ -137,16 +142,34 @@ export function ProductsSection({
                   ) : null}
                 </div>
 
-                <div className="flex flex-1 flex-col gap-2">
-                  <p className="text-base font-semibold leading-6 text-brand-forest">
+                <div className="flex flex-1 flex-col gap-2 px-1">
+                  <p
+                    className="self-stretch text-[18px] font-medium leading-[26px] text-[color:var(--Brand-Deep-Forest-Green,#1D3A34)] sm:text-[20px] sm:leading-[28px]"
+                    style={{ fontFamily: "Inter Tight" }}
+                  >
                     {product.name}
                   </p>
-                  {size ? <p className="text-xs text-slate-600">{size}</p> : null}
-                  <div className="flex items-center gap-2 text-sm text-brand-forest">
-                    {originalPrice ? (
-                      <span className="text-xs text-[#DF382C] line-through">{originalPrice}</span>
+                  <p
+                    className="text-[14px] font-medium leading-[20px] text-[color:var(--Secondary-Myrtle,#1C391A)] sm:text-[16px] sm:leading-[24px]"
+                    style={{ fontFamily: "Inter Tight" }}
+                  >
+                    {size || "Size not specified"}
+                  </p>
+                  <div className="flex flex-wrap gap-2 ">
+                    {computedOriginal ? (
+                      <span
+                        className="text-[14px] font-normal leading-[20px] text-[color:var(--System-Red,#FF3B30)] line-through sm:text-[16px] sm:leading-[24px]"
+                        style={{ fontFamily: "Inter Tight" }}
+                      >
+                        {computedOriginal}
+                      </span>
                     ) : null}
-                    <span className="text-base font-semibold text-brand-forest">{price}</span>
+                    <span
+                      className="text-[18px] font-medium leading-[26px] text-[color:var(--Secondary-Myrtle,#1C391A)] sm:text-[20px] sm:leading-[28px]"
+                      style={{ fontFamily: "Inter Tight" }}
+                    >
+                      {price}
+                    </span>
                   </div>
                 </div>
 
@@ -177,14 +200,15 @@ export function ProductsSection({
                     </div>
                   ) : (
                     <div
-                      className="flex h-11 w-full items-center justify-center rounded-full bg-brand-forest text-sm font-semibold text-white transition hover:bg-brand-leaf"
+                      className="flex w-full items-center justify-center gap-1 rounded-full bg-brand-forest px-4 py-3 text-[16px] font-[550] leading-[24px] text-[color:var(--Base-Color-Pure-White,#FFF)] transition-opacity md:opacity-0 md:group-hover:opacity-100"
+                      style={{ fontFamily: "Optima" }}
                       onClick={(e) => {
                         e.preventDefault();
                         handleAdd(key, product);
                       }}
                     >
                       ADD TO BAG
-                      <ArrowUpRight className="ml-2 h-4 w-4" />
+                      <ArrowUpRight className="ml-1 h-4 w-4" />
                     </div>
                   )}
                 </div>

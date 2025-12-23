@@ -27,7 +27,7 @@ export function HeroCarousel({
   className,
   slides,
   intervalMs = 6000,
-  minHeightClass = "min-h-[120vh]",
+  minHeightClass = "h-[560px] sm:h-[640px] md:h-[800px] lg:h-[900px]",
 }: HeroCarouselProps) {
   const safeSlides = useMemo(() => (slides.length ? slides : [defaultSlide]), [slides]);
   const [index, setIndex] = useState(0);
@@ -46,43 +46,64 @@ export function HeroCarousel({
     "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1800&q=80";
 
   return (
-    <section className={cn("w-full", className)}>
-      <div className="relative overflow-hidden rounded-[32px] bg-slate-900/80 shadow-2xl group">
-        <div className={cn("relative flex items-center justify-center overflow-hidden bg-slate-900", minHeightClass)}>
+    <section
+      className={cn(
+        "flex w-full flex-col items-start gap-2 bg-[#F1F3F3]  py-10",
+        className,
+      )}
+    >
+      <div className="relative h-full w-full overflow-hidden rounded-[32px] bg-slate-900/80 shadow-2xl group">
+        <div
+          className={cn(
+            "relative flex h-full w-full items-center justify-center overflow-hidden bg-slate-900",
+            minHeightClass,
+          )}
+        >
           <Image
             src={backgroundSrc}
             alt={current.title || "Hero background"}
             key={index}
             fill
             priority
-            className="object-cover animate-[heroFade_0.8s_ease]"
+            className="h-full w-full object-cover animate-[heroFade_0.8s_ease]"
             sizes="100vw"
             unoptimized={backgroundSrc.startsWith("http://localhost")}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/35" />
 
           <div key={`content-${index}`} className="relative z-10 w-full pt-12 pb-12 px-12 text-center text-white animate-[heroFade_0.8s_ease] sm:pt-16 sm:pb-16 sm:px-16 lg:pt-20 lg:pb-20 lg:px-20">
-            <div className="mx-auto max-w-4xl flex flex-col items-center gap-6">
+            <div className="mx-auto max-w-4xl flex flex-col items-center gap-6 px-4 sm:px-6">
               {current.eyebrow ? (
-                <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
+                <span
+                  className="text-[16px] font-medium leading-[22px] text-[color:var(--Base-Color-Soft-Cream,#F2EDE7)] sm:text-[18px] sm:leading-[26px]"
+                  style={{ fontFamily: "Inter Tight" }}
+                >
                   {current.eyebrow}
                 </span>
               ) : null}
               {current.title ? (
-                <h1 className="text-5xl font-semibold leading-tight sm:text-6xl lg:text-[5.25rem]">
+                <h1
+                  className="whitespace-pre-line text-center text-[36px] font-[550] leading-[1.2] text-[color:var(--Base-Color-Soft-Cream,#F2EDE7)] sm:text-[44px] md:text-[54px] lg:text-[64px]"
+                  style={{ fontFamily: "Optima" }}
+                >
                   {current.title}
                 </h1>
               ) : null}
             </div>
 
-            {/* Left info block (description + CTA) positioned bottom-left like the design */}
-            <div className="absolute left-6 bottom-6 w-full max-w-xs text-left text-white md:left-10 md:bottom-12">
+            {/* Left info block (description + CTA); stack on mobile to prevent overlap */}
+            <div className="relative mt-8 flex w-full max-w-md flex-col items-center gap-5 px-6 text-center text-white sm:mt-10 sm:max-w-lg md:mt-12 md:max-w-xl md:gap-6 md:px-8 lg:absolute lg:bottom-[120px] lg:left-[120px] lg:mt-0 lg:w-full lg:max-w-xs lg:items-start lg:gap-10 lg:px-0 lg:text-left">
               {current.description ? (
-                <p className="text-sm leading-relaxed text-white/85 mb-4">{current.description}</p>
+                <p
+                  className="mb-3 text-[14px] font-normal leading-[20px] text-[color:var(--Base-Color-Soft-Cream,#F2EDE7)] sm:mb-4 sm:text-[16px] sm:leading-[24px]"
+                  style={{ fontFamily: "Inter Tight" }}
+                >
+                  {current.description}
+                </p>
               ) : null}
               <div className="flex items-center gap-3">
                 <Button
-                  className="group mt-0 h-12 rounded-full bg-brand-forest px-6 text-base font-semibold text-white shadow-lg hover:bg-brand-leaf"
+                  className="group mt-0 h-10 rounded-full bg-brand-forest px-4 text-sm font-semibold text-white shadow-lg hover:bg-brand-leaf sm:h-11 sm:px-5 sm:text-sm md:h-12 md:px-6 md:text-base"
                   size="lg"
                   asChild={Boolean(current.ctaHref)}
                 >
@@ -184,7 +205,7 @@ export function HeroCarousel({
 
 const defaultSlide: HeroSlide = {
   eyebrow: "Beauty Care",
-  title: "Your Best Skin Starts Here",
+  title: "Your Best Skin\nStarts Here",
   description:
     "Science-backed formulas. Nature-inspired ingredients. Glow with skincare that's made to love and made to last.",
   imageUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1800&q=80",

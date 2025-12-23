@@ -276,12 +276,14 @@ export default async function Home() {
           title={ourProductsSection?.productTitle ?? "Our Products"}
           products={ourProducts}
         />
+      
         <WhyChooseUS
           eyebrow={chooseUsRaw?.eyebrows}
           heading={chooseUsRaw?.title}
           heroImage={chooseUsHero}
           features={chooseUsItems}
         />
+          {/* 
         <ProductHighlightSection content={productHighlightContent} />
         <TestimonialsSection
           heading={testimonialSection?.testimonialsHeading}
@@ -301,7 +303,7 @@ export default async function Home() {
           retailers={retailerItems}
           eyebrow={retailerSection?.eyebrow ?? retailerSection?.eyeBrow}
           title={retailerSection?.title}
-        />
+        /> */}
       </>
     </HydrationBoundary>
   );

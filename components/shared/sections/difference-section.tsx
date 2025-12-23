@@ -46,8 +46,13 @@ export function WhyChooseUS({
   const eyebrowText = eyebrow ?? "Why choose us?";
   const headingText = heading ?? "The Difference is in the Details";
   return (
-    <section className={cn("w-full px-6 py-5 sm:px-12 lg:px-16", className)}>
-      <div className="mx-auto grid items-stretch gap-8 rounded-[32px] bg-transparent lg:grid-cols-[1.05fr_1fr]">
+    <section
+      className={cn(
+        "flex h-[900px] w-full items-center gap-3 self-stretch py-10",
+        className,
+      )}
+    >
+      <div className="mx-auto grid w-full items-stretch gap-8 rounded-[32px] bg-transparent lg:grid-cols-[1.05fr_1fr]">
         <div className="overflow-hidden rounded-[32px] bg-white">
           <div
             className="aspect-[4/5] min-h-[360px] w-full bg-cover bg-center"
