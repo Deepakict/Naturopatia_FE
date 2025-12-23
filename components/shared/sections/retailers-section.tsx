@@ -16,32 +16,27 @@ export function RetailersSection({
   eyebrow = "Authorised Retailers",
   title = "We’re also available at",
 }: RetailersSectionProps) {
-  const firstRow = retailers.slice(0, 3);
-  const secondRow = retailers.slice(3);
+  const logos = retailers;
 
   return (
-    <section className={cn("w-full px-6 py-16 sm:px-12 lg:px-16", className)}>
-      <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-10">
-        <div className="space-y-2 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+    <section className={cn("w-full bg-[#F1F3F3] px-4 py-0 sm:px-8 sm:py-0 lg:px-12 lg:py-0", className)}>
+      <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-8 sm:gap-9 lg:gap-10">
+        <div className="flex flex-col items-center gap-2 sm:gap-3 text-center">
+          <p className="font-['Inter_Tight'] text-[12px] font-semibold uppercase tracking-[0.28em] text-[#A8B4B1] sm:text-[13px]">
             {eyebrow}
           </p>
-          <h3 className="text-4xl font-semibold text-brand-forest sm:text-[42px]">{title}</h3>
+          <h3 className="w-full max-w-[1014px] font-['Optima'] text-[30px] font-[550] leading-[38px] text-[#4B6660] opacity-90 sm:text-[36px] sm:leading-[44px] lg:text-[48px] lg:leading-[57.6px]">
+            {title}
+          </h3>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-10">
-          <div className="flex w-full flex-wrap items-center justify-center gap-12">
-            {firstRow.map((retailer) => (
-              <RetailerLogo key={retailer.name} retailer={retailer} />
-            ))}
-          </div>
-          {secondRow.length ? (
-            <div className="flex w-full flex-wrap items-center justify-center gap-12">
-              {secondRow.map((retailer) => (
-                <RetailerLogo key={retailer.name} retailer={retailer} />
-              ))}
-            </div>
-          ) : null}
+        <div
+          className="flex w-full max-w-[1088px] flex-wrap items-center justify-center content-center py-0"
+          style={{ columnGap: "80px", rowGap: "60px" }}
+        >
+          {logos.map((retailer) => (
+            <RetailerLogo key={retailer.name} retailer={retailer} />
+          ))}
         </div>
       </div>
     </section>
@@ -50,7 +45,7 @@ export function RetailersSection({
 
 function RetailerLogo({ retailer }: { retailer: Retailer }) {
   return (
-    <div className="flex items-center justify-center bg-transparent p-4 sm:p-6">
+    <div className="flex items-center justify-center bg-transparent">
       {retailer.logo ? (
         <Image
           src={retailer.logo}

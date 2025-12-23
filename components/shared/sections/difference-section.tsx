@@ -48,7 +48,7 @@ export function WhyChooseUS({
   return (
     <section
       className={cn(
-        "flex w-full items-center self-stretch px-4 py-10 sm:px-6 lg:h-[900px] lg:px-0",
+        "flex w-full items-center self-stretch px-4 py-5 sm:px-6 sm:py-5 lg:h-[900px] lg:px-0",
         className,
       )}
     >

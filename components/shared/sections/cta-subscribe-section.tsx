@@ -25,8 +25,13 @@ export function NewsLetterSection({
   const hasVideo = isVideo || (backgroundUrl?.toLowerCase().endsWith(".mp4") ?? false);
 
   return (
-    <section className={cn("w-full px-6 py-12 sm:px-12 lg:px-16", className)}>
-      <div className="relative mx-auto flex max-w-[1440px] overflow-hidden rounded-[32px] bg-[#F1F3F3]">
+    <section
+      className={cn(
+        "relative left-1/2 right-1/2 flex w-screen -translate-x-1/2 justify-center bg-[#F1F3F3] px-4 py-8 sm:px-5 sm:py-10 lg:px-5 lg:py-12",
+        className,
+      )}
+    >
+      <div className="relative mx-auto flex w-full max-w-[1440px] flex-col items-start gap-2 overflow-hidden rounded-[32px] bg-[#F1F3F3]">
         {backgroundUrl ? (
           hasVideo ? (
             <video
@@ -50,53 +55,30 @@ export function NewsLetterSection({
 
         <div
           className={cn(
-            "relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-6 py-16 text-center sm:py-20 lg:py-24",
+            "relative z-10 mx-auto flex w-full max-w-[1400px] flex-col items-center gap-10 rounded-[32px] px-5 py-14 text-center sm:gap-16 sm:px-6 sm:py-18 lg:w-[1400px] lg:gap-[118px] lg:px-5 lg:py-40",
             backgroundUrl ? "text-white" : "text-brand-forest",
           )}
         >
-          <p
-            className={cn(
-              "text-xs font-semibold uppercase tracking-[0.22em]",
-              backgroundUrl ? "text-white/85" : "text-slate-600",
-            )}
-          >
-            {eyebrow}
-          </p>
-          <h3
-            className={cn(
-              "text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl",
-              backgroundUrl ? "text-white" : "text-brand-forest",
-            )}
-          >
-            {title}
-          </h3>
-          <p
-            className={cn(
-              "max-w-2xl text-base leading-relaxed sm:text-lg",
-              backgroundUrl ? "text-white/85" : "text-brand-forest",
-            )}
-          >
-            {description}
-          </p>
+          <div className="flex flex-col items-center gap-3">
+            <p className="font-['Inter_Tight'] text-[14px] font-[500] leading-[22px] text-white sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[26px]">
+              {eyebrow}
+            </p>
+            <h3 className="font-['Optima'] text-[30px] font-[550] leading-[38px] text-white opacity-80 sm:text-[36px] sm:leading-[44px] md:text-[46px] md:leading-[56px] lg:text-[56px] lg:leading-[67.2px]">
+              {title}
+            </h3>
+            <p className="max-w-[473px] font-['Inter_Tight'] text-[14px] font-normal leading-[22px] text-white/80 sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[26px]">
+              {description}
+            </p>
+          </div>
 
-          <form className="flex w-full max-w-xl flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <form className="flex w-full max-w-[620px] flex-col items-center gap-3 rounded-[32px] bg-white px-3 py-1.5 shadow-lg sm:flex-row sm:justify-center sm:px-4">
             <input
               type="email"
               placeholder={inputPlaceholder}
-              className={cn(
-                "h-12 w-full rounded-full px-5 text-sm shadow-lg outline-none ring-2 ring-transparent transition sm:flex-1",
-                backgroundUrl ? "border-none bg-white text-slate-800 focus:ring-white" : "border border-brand-mist bg-white text-brand-forest focus:ring-brand-forest/40",
-              )}
+              className="h-[50px] w-full min-w-[200px] flex-1 rounded-full border border-transparent bg-transparent px-3 text-[15px] font-normal leading-[22px] text-[#859390] placeholder:text-[#859390] outline-none ring-0 sm:min-w-[220px] sm:text-[16px] sm:leading-[24px]"
             />
-            <Button
-              className={cn(
-                "h-12 w-full rounded-full px-8 text-sm font-semibold shadow-lg sm:w-auto",
-                backgroundUrl
-                  ? "bg-brand-forest text-white hover:bg-brand-leaf"
-                  : "border border-brand-forest bg-brand-forest text-white hover:bg-brand-leaf",
-              )}
-            >
-              {buttonLabel}
+            <Button className="flex h-[50px] w-full items-center justify-center gap-1 rounded-full bg-brand-forest px-5 py-[14px] text-white sm:w-auto">
+              <span className="font-['Optima'] text-[18px] font-[550] leading-[26px]">{buttonLabel}</span>
             </Button>
           </form>
         </div>

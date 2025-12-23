@@ -66,7 +66,7 @@ export function ProductsSection({
   return (
     <section
       className={cn(
-        "inline-flex w-full flex-col items-start justify-center gap-[56px] bg-[#F1F3F3] py-[120px]",
+        "inline-flex w-full flex-col items-start justify-center gap-[56px] bg-[#F1F3F3] py-[20px]",
         className,
       )}
     >

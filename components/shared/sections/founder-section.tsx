@@ -31,7 +31,7 @@ export function FounderSection({
   return (
     <section
       className={cn(
-        "flex w-full items-center self-stretch px-4 py-10 sm:px-6 lg:h-[800px] lg:px-0",
+        "flex w-full items-center self-stretch px-4 pt-10 pb-5 sm:px-6 sm:pt-10 sm:pb-5 lg:h-[800px] lg:px-0",
         className,
       )}
     >

@@ -314,8 +314,6 @@ export default async function Home() {
         
         <ProductHighlightSection content={productHighlightContent} />
 
-       
-       
         <TestimonialsSection
           heading={testimonialSection?.testimonialsHeading}
           testimonials={testimonialItems}
@@ -341,7 +339,7 @@ export default async function Home() {
             imageUrl={founderImage ?? undefined}
           />
         ) : null}
-           {/* 
+          
         <NewsLetterSection
           eyebrow={newsletter?.eyebrow}
           title={newsletter?.title}
@@ -351,12 +349,11 @@ export default async function Home() {
           backgroundUrl={newsletterBgUrl}
           isVideo={newsletterBg?.mime === "video/mp4"}
         />
-        <CommunitySection tiles={communityTiles} />
         <RetailersSection
           retailers={retailerItems}
           eyebrow={retailerSection?.eyebrow ?? retailerSection?.eyeBrow}
           title={retailerSection?.title}
-        /> */}
+        /> 
       </>
     </HydrationBoundary>
   );

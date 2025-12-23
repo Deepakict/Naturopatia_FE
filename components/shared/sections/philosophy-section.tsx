@@ -31,15 +31,20 @@ export function PhilosophySection({
     : undefined;
 
   return (
-    <section className={cn("flex w-full justify-center", className)}>
+    <section
+      className={cn(
+        "relative left-1/2 right-1/2 flex w-screen -translate-x-1/2 justify-center",
+        className,
+      )}
+    >
       <div
-        className="flex h-[900px] w-full flex-col items-center justify-center gap-6 px-16"
+        className="flex min-h-[520px] w-full max-w-none flex-col items-center justify-center gap-4 bg-center bg-cover px-5 py-16 sm:gap-5 sm:px-10 md:min-h-[640px] md:gap-6 md:px-16 lg:min-h-[760px]"
         style={bgStyle}
       >
-        <p className="self-stretch text-center font-['Inter_Tight'] text-[16px] font-normal leading-[24px] text-white">
+        <p className="self-stretch text-center font-['Inter_Tight'] text-[14px] font-normal leading-[20px] text-white sm:text-[15px] sm:leading-[22px] md:text-[16px] md:leading-[24px]">
           {eyebrow}
         </p>
-        <h2 className="self-stretch text-center font-['Optima'] text-[56px] font-[400] leading-[67.2px] text-white">
+        <h2 className="self-stretch text-center font-['Optima'] text-[32px] font-[400] leading-[38px] text-white sm:text-[40px] sm:leading-[48px] md:text-[48px] md:leading-[56px] lg:text-[56px] lg:leading-[67.2px]">
           {headline}
         </h2>
 
