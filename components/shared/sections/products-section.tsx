@@ -66,19 +66,19 @@ export function ProductsSection({
   return (
     <section
       className={cn(
-        "inline-flex w-full flex-col items-start justify-center gap-[56px] bg-[#F1F3F3] py-[20px]",
+        "inline-flex w-full flex-col items-start justify-center gap-8 bg-[#F1F3F3] py-6 sm:gap-10 sm:py-10",
         className,
       )}
     >
-      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 px-4 sm:gap-8 sm:px-6 lg:px-8">
         <h2
-          className="text-[48px] font-[550] leading-[1.2] text-[color:var(--Brand-Deep-Forest-Green,#1D3A34)]"
+          className="text-2xl font-semibold leading-tight text-[color:var(--Brand-Deep-Forest-Green,#1D3A34)] sm:text-3xl lg:text-4xl"
           style={{ fontFamily: "Optima" }}
         >
           {title}
         </h2>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => {
             const price = product.price ?? "";
             const originalPrice = product.originalPrice;
@@ -101,16 +101,16 @@ export function ProductsSection({
             const isAdded = Boolean(cartItem);
 
             const Card = (
-              <article className="group relative flex h-full flex-col gap-4 rounded-[28px]  p-4 transition hover:-translate-y-1">
-                <div className="relative w-full overflow-hidden rounded-[22px]">
+              <article className="group relative flex h-full flex-col gap-4 rounded-lg p-4 transition hover:-translate-y-1">
+                <div className="relative w-full overflow-hidden rounded-lg">
                   <div
-                    className="mx-auto h-[340px] w-full max-w-[320px] bg-cover bg-center sm:h-[420px] sm:max-w-[360px] lg:h-[486.4px] lg:max-w-[394px]"
+                    className="mx-auto h-64 w-full max-w-xs bg-cover bg-center sm:h-72 lg:h-80"
                     style={{ backgroundImage: `url(${product.image})`, aspectRatio: "394 / 486.4" }}
                   />
                   {badge ? (
                     product.badgeTone === "success" ? (
                       <div
-                        className="absolute -right-14 top-6 w-40 rotate-45 bg-[#E5210E] px-6 py-2 text-center text-[20px] font-[400] leading-[28px] text-white"
+                        className="absolute -right-10 top-4 w-32 rotate-45 bg-[#E5210E] px-4 py-1 text-center text-sm font-medium text-white"
                         style={{ fontFamily: "Optima" }}
                       >
                         {badge}
@@ -118,7 +118,7 @@ export function ProductsSection({
                     ) : (
                       <div
                         className={cn(
-                          "absolute right-3 top-3 rounded-md px-3 py-2 text-xs font-semibold uppercase text-white shadow",
+                          "absolute right-2 top-2 rounded-md px-2 py-1 text-xs font-semibold uppercase text-white shadow",
                           badgeToneClasses(product.badgeTone),
                         )}
                       >
@@ -128,7 +128,7 @@ export function ProductsSection({
                   ) : null}
                   {limited ? (
                     <div
-                      className="absolute bottom-5 left-1/2 h-[58px] w-[394px] -translate-x-1/2 rounded-b-[22px] px-4 py-3 text-center text-[24px] font-[400] leading-[33.6px] text-white"
+                      className="absolute bottom-4 left-1/2 w-full max-w-xs -translate-x-1/2 rounded-b-lg px-4 py-2 text-center text-sm font-medium text-white"
                       style={{
                         fontFamily: "Optima",
                         backgroundColor: "#1e5b4e",
@@ -144,28 +144,28 @@ export function ProductsSection({
 
                 <div className="flex flex-1 flex-col gap-2 px-1">
                   <p
-                    className="self-stretch text-[18px] font-medium leading-[26px] text-[color:var(--Brand-Deep-Forest-Green,#1D3A34)] sm:text-[20px] sm:leading-[28px]"
+                    className="text-base font-medium leading-snug text-[color:var(--Brand-Deep-Forest-Green,#1D3A34)] sm:text-lg"
                     style={{ fontFamily: "Inter Tight" }}
                   >
                     {product.name}
                   </p>
                   <p
-                    className="text-[14px] font-medium leading-[20px] text-[color:var(--Secondary-Myrtle,#1C391A)] sm:text-[16px] sm:leading-[24px]"
+                    className="text-sm font-medium leading-snug text-[color:var(--Secondary-Myrtle,#1C391A)] sm:text-base"
                     style={{ fontFamily: "Inter Tight" }}
                   >
                     {size || "Size not specified"}
                   </p>
-                  <div className="flex flex-wrap gap-2 ">
+                  <div className="flex flex-wrap gap-2">
                     {computedOriginal ? (
                       <span
-                        className="text-[14px] font-normal leading-[20px] text-[color:var(--System-Red,#FF3B30)] line-through sm:text-[16px] sm:leading-[24px]"
+                        className="text-sm font-normal leading-snug text-[color:var(--System-Red,#FF3B30)] line-through sm:text-base"
                         style={{ fontFamily: "Inter Tight" }}
                       >
                         {computedOriginal}
                       </span>
                     ) : null}
                     <span
-                      className="text-[18px] font-medium leading-[26px] text-[color:var(--Secondary-Myrtle,#1C391A)] sm:text-[20px] sm:leading-[28px]"
+                      className="text-base font-medium leading-snug text-[color:var(--Secondary-Myrtle,#1C391A)] sm:text-lg"
                       style={{ fontFamily: "Inter Tight" }}
                     >
                       {price}
@@ -200,7 +200,7 @@ export function ProductsSection({
                     </div>
                   ) : (
                     <div
-                      className="flex w-full items-center justify-center gap-1 rounded-full bg-brand-forest px-4 py-3 text-[16px] font-[550] leading-[24px] text-[color:var(--Base-Color-Pure-White,#FFF)] transition-opacity md:opacity-0 md:group-hover:opacity-100"
+                      className="flex w-full items-center justify-center gap-1 rounded-full bg-brand-forest px-4 py-3 text-sm font-medium text-white transition-opacity md:opacity-0 md:group-hover:opacity-100"
                       style={{ fontFamily: "Optima" }}
                       onClick={(e) => {
                         e.preventDefault();

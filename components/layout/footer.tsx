@@ -41,13 +41,13 @@ export function Footer({ className }: FooterProps) {
       )}
     >
       <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 md:gap-12">
-        <div className="flex flex-col gap-8 self-stretch md:flex-row md:items-start md:justify-between md:gap-10">
-          <p className="flex w-full max-w-[422px] items-start justify-between self-stretch text-[20px] font-normal leading-[28px] text-[#3F5650] md:w-[422px]">
+        <div className="flex flex-col gap-8 self-stretch md:flex-row md:items-start md:justify-between md:gap-6 lg:gap-10">
+          <p className="flex w-full max-w-[422px] items-start justify-between self-stretch text-[18px] font-normal leading-[26px] text-[#3F5650] md:w-[422px] lg:text-[20px] lg:leading-[28px]">
             A relationship between you and your skin, between nature and science, between
             beauty and responsibility.
           </p>
 
-          <div className="flex flex-col items-start gap-8 md:flex-row md:gap-[160px]">
+          <div className="flex flex-col items-start gap-6 md:flex-row md:gap-10 lg:gap-[160px]">
             <FooterColumn title="Shop" links={shopLinks} />
             <FooterColumn title="More" links={moreLinks} />
             <FooterColumn title="Follow" links={socialLinks} />
@@ -55,7 +55,10 @@ export function Footer({ className }: FooterProps) {
         </div>
 
         <div className="flex flex-col items-center gap-8 self-stretch px-6 pb-6 pt-6 md:px-10 md:pb-8 md:pt-10">
-          <Button className="inline-flex items-center justify-center gap-[2px] rounded-full bg-brand-forest px-4 py-3 font-[550] text-[16px] leading-[24px] text-white hover:bg-brand-leaf" style={{ fontFamily: "Optima", padding: "12px 16px" }}>
+          <Button
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-leaf sm:px-8 sm:py-4 md:px-10 md:py-5"
+            style={{ fontFamily: "Optima" }}
+          >
             Back to Top
           </Button>
         </div>

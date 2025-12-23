@@ -68,11 +68,11 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
   const displayQty = cartItem?.quantity ?? qty;
 
   return (
-    <section className="flex w-full justify-center">
+    <section className="flex w-full justify-center px-4 sm:px-6 md:px-8">
       <div className="flex w-full max-w-[1440px] flex-col items-start gap-12">
-        <section className="grid gap-6 lg:grid-cols-[520px_1fr]">
+        <section className="grid gap-6 md:grid-cols-1 lg:grid-cols-[520px_1fr] px-4 sm:px-6 md:px-8">
           <div className="flex flex-col gap-4">
-            <div className="relative h-[600px] w-full self-stretch overflow-hidden rounded-[16px] bg-white shadow-md">
+            <div className="relative h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] w-full self-stretch overflow-hidden rounded-[16px] bg-white shadow-md">
               <Image
                 src={activeImage.src}
                 alt={activeImage.alt}
@@ -82,12 +82,12 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
                 unoptimized={activeImage.src.includes("localhost")}
               />
               {product.badge ? (
-                <div className="absolute -right-16 top-8 w-48 rotate-45 bg-[#DF382C] px-8 py-3 text-center text-xs font-semibold uppercase tracking-[0.08em] text-white shadow-lg">
+                <div className="absolute -right-12 sm:-right-16 top-4 sm:top-8 w-36 sm:w-48 rotate-45 bg-[#DF382C] px-6 sm:px-8 py-2 sm:py-3 text-center text-xs font-semibold uppercase tracking-[0.08em] text-white shadow-lg">
                   {product.badge}
                 </div>
               ) : null}
               {product.limited ? (
-                <div className="absolute bottom-0 left-0 w-full bg-brand-forest/90 px-6 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white">
+                <div className="absolute bottom-0 left-0 w-full bg-brand-forest/90 px-4 sm:px-6 py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold uppercase tracking-wide text-white">
                   {product.limited}
                 </div>
               ) : null}
@@ -100,7 +100,7 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
                   type="button"
                   onClick={() => setActiveImage(img)}
                   className={cn(
-                    "relative h-[119.718px] w-[120px] flex-shrink-0 overflow-hidden rounded-[16px] bg-center bg-cover shadow-sm transition",
+                    "relative h-[60px] sm:h-[80px] md:h-[100px] w-[60px] sm:w-[80px] md:w-[100px] flex-shrink-0 overflow-hidden rounded-[16px] bg-center bg-cover shadow-sm transition",
                     activeImage.src === img.src && "shadow-md",
                   )}
                   style={{
@@ -116,12 +116,12 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
             </div>
           </div>
 
-          <div className="flex w-full flex-1 flex-col gap-8 self-stretch rounded-[24px] bg-[#FFFFFF] px-[44px] py-[64px]">
+          <div className="flex w-full flex-1 flex-col gap-6 sm:gap-8 self-stretch rounded-[24px] bg-[#FFFFFF] px-4 sm:px-6 md:px-[44px] py-4 sm:py-6 md:py-[64px]">
             <div className="flex flex-col items-start justify-center gap-4 self-stretch">
               <div className="flex items-center gap-3">
                 {product.bestSeller ? (
                   <span
-                    className="inline-flex w-fit text-center text-[18px] font-medium leading-[26px] text-[#9CA8A5]"
+                    className="inline-flex w-fit text-center text-[12px] sm:text-[14px] md:text-[16px] font-medium leading-[20px] sm:leading-[26px] text-[#9CA8A5]"
                     style={{ fontFamily: "Inter Tight" }}
                   >
                     Best Sellers
@@ -129,19 +129,19 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
                 ) : null}
               </div>
 
-              <h1 className="font-[550] font-[Optima] text-[48px] leading-[120%] text-[#1D3A34]">
+              <h1 className="font-[550] font-[Optima] text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] leading-[120%] text-[#1D3A34]">
                 {product.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-3 text-[16px] font-normal leading-[24px] text-[#6E7F7B]" style={{ fontFamily: "Inter Tight" }}>
+              <div className="flex flex-wrap items-center gap-3 text-[12px] sm:text-[14px] md:text-[16px] font-normal leading-[20px] sm:leading-[24px] text-[#6E7F7B]" style={{ fontFamily: "Inter Tight" }}>
                 {product.rating ? (
                   <div className="flex items-center gap-2 text-[#1D3A34]" style={{ fontFamily: "Inter Tight" }}>
                     {Array.from({ length: 5 }).map((_, idx) => (
                       <svg
                         key={idx}
                         xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="17"
+                        width="16"
+                        height="15"
                         viewBox="0 0 18 17"
                         fill={idx < Math.round(product.rating!) ? "#1D3A34" : "#E2E8E6"}
                       >
@@ -152,7 +152,7 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
                 ) : null}
                 {product.reviews ? (
                   <span
-                    className="text-[16px] font-normal leading-[24px] text-[#6E7F7B]"
+                    className="text-[12px] sm:text-[14px] md:text-[16px] font-normal leading-[20px] sm:leading-[24px] text-[#6E7F7B]"
                     style={{ fontFamily: "Inter Tight" }}
                   >
                     ({product.reviews})
@@ -162,13 +162,13 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
 
               <div className="flex items-center gap-2 pt-1">
                 <p
-                  className="text-[16px] font-medium leading-[24px] text-[#1D3A34]"
+                  className="text-[12px] sm:text-[14px] md:text-[16px] font-medium leading-[20px] sm:leading-[24px] text-[#1D3A34]"
                   style={{ fontFamily: "Inter Tight" }}
                 >
                   Net content:
                 </p>
                 <p
-                  className="text-[16px] font-[700] leading-[24px] text-[#1D3A34]"
+                  className="text-[12px] sm:text-[14px] md:text-[16px] font-[700] leading-[20px] sm:leading-[24px] text-[#1D3A34]"
                   style={{ fontFamily: "Inter Tight" }}
                 >
                   200g
@@ -177,26 +177,13 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
 
               <div className="flex items-center gap-4 self-stretch">
                 {product.originalPrice ? (
-                  <span className="text-sm text-[#DF382C] line-through">{product.originalPrice}</span>
+                  <span className="text-xs sm:text-sm text-[#DF382C] line-through">{product.originalPrice}</span>
                 ) : null}
                 {product.price ? (
-                  <span className="font-[550] font-[Optima] text-[48px] leading-[120%] text-[#1D3A34]">
+                  <span className="font-[550] font-[Optima] text-[24px] sm:text-[32px] md:text-[40px] leading-[120%] text-[#1D3A34]">
                     {product.price}
                   </span>
                 ) : null}
-                <span
-                  className="text-[16px] font-normal leading-[24px] text-[#FF3B30] line-through text-center"
-                  style={{ fontFamily: "Inter Tight" }}
-                >
-                  {pricePlus10 !== null
-                    ? `${pricePrefix}${pricePlus10.toLocaleString("en-IN", {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 2,
-                    })}`
-                    : product.price
-                      ? `${product.price} + 10%`
-                      : "10% increase"}
-                </span>
               </div>
 
               {product.sizes?.length ? (
@@ -370,15 +357,15 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
           </div>
         </section>
 
-        <section className="flex h-[1334px] w-[1440px] items-start gap-[120px] px-[120px] pb-[80px] pt-[120px]">
-          <div className="flex w-[305px] flex-shrink-0 flex-col items-start gap-5 self-stretch text-sm text-slate-600">
+        <section className="flex flex-col md:flex-row w-full items-start gap-6 md:gap-10 lg:gap-[120px] px-4 sm:px-6 md:px-10 lg:px-[120px] pb-6 sm:pb-8 md:pb-10 lg:pb-[80px] pt-6 sm:pt-8 md:pt-10 lg:pt-[120px]">
+          <div className="flex w-full md:w-[305px] flex-shrink-0 flex-col items-start gap-5 self-stretch text-sm text-slate-600">
             {product.highlights?.map((item, idx) => (
               <button
                 key={item.title || idx}
                 type="button"
                 onClick={() => setActiveHighlight(idx)}
                 className={cn(
-                  "flex w-full items-start justify-between gap-2 self-stretch border-b px-0 py-5 text-base font-normal leading-6 transition",
+                  "flex w-full items-start justify-between gap-2 self-stretch border-b px-0 py-3 sm:py-4 md:py-4 lg:py-5 text-sm sm:text-base font-normal leading-5 sm:leading-6 transition",
                   activeHighlight === idx
                     ? "border-[#1D3A34] text-[#1D3A34]"
                     : "border-[#859390] text-[#859390]",
@@ -402,25 +389,24 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
             ))}
           </div>
 
-          <div className="p-6 ">
+          <div className="p-4 sm:p-6 md:p-8 lg:p-10 w-full">
             <h3
-              className="self-stretch text-[24px] font-[550] leading-[140%] text-[#1D3A34]"
+              className="self-stretch text-[20px] sm:text-[24px] md:text-[22px] lg:text-[24px] font-[550] leading-[130%] sm:leading-[140%] text-[#1D3A34]"
               style={{ fontFamily: "Optima" }}
             >
               Overview
             </h3>
 
             {product.highlights?.length ? (
-              <div className="mt-6 ">
-
-                <div className="rounded-xl border-slate-200 text-sm text-slate-700 ">
+              <div className="mt-4 sm:mt-6">
+                <div className="rounded-xl border-slate-200 text-sm text-slate-700">
                   {(product.highlights[activeHighlight]?.body ?? "")
                     .split("\n")
                     .filter(Boolean)
                     .map((para, idx) => (
                       <p
                         key={idx}
-                        className="mb-2 self-stretch text-[20px] font-normal leading-[28px] text-[#3F5650] last:mb-0"
+                        className="mb-2 self-stretch text-[16px] sm:text-[18px] md:text-[16px] lg:text-[20px] font-normal leading-[24px] sm:leading-[26px] md:leading-[24px] lg:leading-[28px] text-[#3F5650] last:mb-0"
                         style={{ fontFamily: "Inter Tight" }}
                       >
                         {para}
