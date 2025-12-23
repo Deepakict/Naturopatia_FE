@@ -28,24 +28,23 @@ export function CartModal({ open, onClose, items, onUpdateQuantity, onRemove, on
   }, 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-end bg-black/40 backdrop-blur-sm">
-      <div className="relative m-4 w-full max-w-[460px] rounded-3xl bg-white shadow-2xl">
+    <div className="fixed inset-0 z-[260] flex items-start justify-end bg-black/40 pt-6 backdrop-blur-sm">
+      <div className="relative m-4 flex w-full max-w-[520px] flex-col gap-6 rounded-[32px] bg-white px-10 pb-10 pt-14 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-700 transition hover:bg-slate-50"
+          className="absolute -right-4 -top-8 flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
           aria-label="Close cart"
         >
           <X className="h-4 w-4" />
+          CLOSE
         </button>
 
-        <div className="p-6">
-          <div className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
-            Cart 1
-          </div>
+        <div className="flex flex-1 flex-col items-start gap-6">
+          <div className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-600">Cart 1</div>
 
-          <div className="space-y-4">
+          <div className="flex w-full flex-col gap-4">
             {items.map((item) => (
-              <div key={item.id} className="grid grid-cols-[92px_1fr_auto] items-center gap-4">
+              <div key={item.id} className="grid grid-cols-[92px_1fr_auto] items-start gap-4">
                 <div className="relative h-24 w-20 overflow-hidden rounded-2xl bg-slate-100">
                   <Image
                     src={item.image ?? "/logos/logo.svg"}
@@ -53,52 +52,50 @@ export function CartModal({ open, onClose, items, onUpdateQuantity, onRemove, on
                     fill
                     className="object-cover"
                     sizes="100px"
-                    unoptimized={item.image.includes("localhost")}
+                    unoptimized={item.image?.includes("localhost") ?? false}
                   />
                 </div>
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-slate-900">{item.name}</p>
-                  <div className="flex items-center gap-2 text-xs text-slate-600">
-                    <span className="flex items-center gap-1 rounded-full border border-slate-200 px-2 py-1">
+                <div className="flex flex-col gap-2">
+                  <p className="text-base font-semibold leading-6 text-slate-900">{item.name}</p>
+                  <div className="flex items-center gap-3 text-sm text-slate-700">
+                    <span className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5">
                       <button
                         type="button"
                         onClick={() => onUpdateQuantity?.(item.id, Math.max(0, item.quantity - 1))}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
                       >
                         <Minus className="h-3 w-3" />
                       </button>
-                      <span>{item.quantity}</span>
+                      <span className="min-w-[20px] text-center text-sm font-semibold">{item.quantity}</span>
                       <button
                         type="button"
                         onClick={() => onUpdateQuantity?.(item.id, item.quantity + 1)}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 transition hover:border-brand-forest"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
                     </span>
-                    {item.size ? <span className="text-slate-500">{item.size}</span> : null}
+                    {item.size ? <span className="text-slate-600">{item.size}</span> : null}
                   </div>
                   <button
-                    className="text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-rose-600"
+                    className="text-xs font-semibold uppercase tracking-wide text-slate-600 underline underline-offset-4 hover:text-rose-600"
                     onClick={() => onRemove?.(item.id)}
                   >
                     Remove
                   </button>
                 </div>
-                <div className="text-sm font-semibold text-slate-900">
-                  {item.price}
-                </div>
+                <div className="text-base font-semibold leading-6 text-slate-900">{item.price}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-4 border-t border-slate-200 px-6 py-5">
-          <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
+        <div className="w-full border-t border-slate-200 pt-5">
+          <div className="flex items-center justify-between text-base font-semibold text-slate-900">
             <span>Total</span>
             <span>${total.toFixed(2)}</span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">Taxes and shipping calculated at checkout</p>
+          <p className="mt-1 text-xs text-slate-600">Taxes and shipping calculated at checkout</p>
           <button
             type="button"
             aria-label="Checkout"
