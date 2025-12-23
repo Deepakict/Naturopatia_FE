@@ -285,11 +285,12 @@ export default async function Home() {
         />
         
         <ProductHighlightSection content={productHighlightContent} />
-          {/* 
+       
         <TestimonialsSection
           heading={testimonialSection?.testimonialsHeading}
           testimonials={testimonialItems}
         />
+           {/* 
         <NewsLetterSection
           eyebrow={newsletter?.eyebrow}
           title={newsletter?.title}
