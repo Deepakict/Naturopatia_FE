@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { AuthCardContainer } from "@/components/ui/auth-card-container";
 import { AuthHeading } from "@/components/ui/auth-heading";
-import { AuthTabs } from "@/components/auth/authTabs";
-import { PasswordInput } from "@/components/auth/passwordInput";
+import { AuthTabs } from "@/components/forms/auth/authTabs";
+import { PasswordInput } from "@/components/forms/auth/passwordInput";
 import { InputText } from "@/components/ui/input-text";
 import { PrimaryButton } from "@/components/ui/primary-button";
 

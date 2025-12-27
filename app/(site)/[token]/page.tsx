@@ -1,7 +1,7 @@
 "use client";
 
-import { NewPasswordCard } from "@/components/forms/new-password-card";
-import { PasswordUpdatedCard } from "@/components/forms/password-updated-card";
+import { NewPasswordCard } from "@/components/forms/auth/new-password-card";
+import { PasswordUpdatedCard } from "@/components/forms/auth/password-updated-card";
 import { useState } from "react";
 
 export default function NewPasswordPage({ params }: { params: { token: string } }) {

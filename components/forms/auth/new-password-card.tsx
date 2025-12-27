@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { AuthCardContainer } from "@/components/ui/auth-card-container";
 import { AuthHeading } from "@/components/ui/auth-heading";
-import { PasswordInput } from "@/components/auth/passwordInput";
+import { PasswordInput } from "@/components/forms/auth/passwordInput";
 import { PrimaryButton } from "@/components/ui/primary-button";
-import { isStrongPassword } from "@/components/auth/passwordRules";
+import { isStrongPassword } from "@/components/forms/auth/passwordRules";
 
 type NewPasswordCardProps = {
   onSave?: (data: { password: string }) => void;

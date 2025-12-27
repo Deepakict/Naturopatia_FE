@@ -1,11 +1,11 @@
 "use client";
 
 import { Modal } from "@/components/ui/modal";
-import { LoginCard } from "@/components/forms/login-card";
-import { RegisterCard } from "@/components/forms/register-card";
-import { ResetPasswordCard } from "@/components/forms/reset-password-card";
-import { NewPasswordCard } from "@/components/forms/new-password-card";
-import { PasswordUpdatedCard } from "@/components/forms/password-updated-card";
+import { LoginCard } from "@/components/forms/auth/login-card";
+import { RegisterCard } from "@/components/forms/auth/register-card";
+import { ResetPasswordCard } from "@/components/forms/auth/reset-password-card";
+import { NewPasswordCard } from "@/components/forms/auth/new-password-card";
+import { PasswordUpdatedCard } from "@/components/forms/auth/password-updated-card";
 import { ChevronRight, Menu, ShoppingBag, User, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
