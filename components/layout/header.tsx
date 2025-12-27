@@ -1,5 +1,11 @@
 "use client";
 
+import { Modal } from "@/components/ui/modal";
+import { LoginCard } from "@/components/forms/login-card";
+import { RegisterCard } from "@/components/forms/register-card";
+import { ResetPasswordCard } from "@/components/forms/reset-password-card";
+import { NewPasswordCard } from "@/components/forms/new-password-card";
+import { PasswordUpdatedCard } from "@/components/forms/password-updated-card";
 import { ChevronRight, Menu, ShoppingBag, User, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -70,12 +76,22 @@ export function Header({ className }: HeaderProps) {
   const [isLoadingShop, setIsLoadingShop] = useState(false);
   const { items: cartItems, updateQuantity, removeItem } = useCart();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+  const [authTab, setAuthTab] = useState<"login" | "register">("login");
+  const [resetModal, setResetModal] = useState<
+    "none" | "reset" | "new" | "updated"
+  >("none");
   const cartTotalCount = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
     [cartItems],
   );
+    const [authModalOpen, setAuthModalOpen] = useState(false);
 
+  const activeAuthScreen =
+    resetModal !== "none"
+      ? resetModal
+      : authTab === "login"
+      ? "login"
+      : "register";
   const loadShopProducts = async () => {
     console.log("Loading shop products...");
     if (shopProducts || isLoadingShop) return;
@@ -224,6 +240,7 @@ export function Header({ className }: HeaderProps) {
               type="button"
               className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-forest text-white shadow-sm transition hover:bg-brand-leaf"
               aria-label="Account"
+              onClick={() => setAuthModalOpen(true)}
             >
               <User className="h-4 w-4" />
             </button>
@@ -437,7 +454,7 @@ export function Header({ className }: HeaderProps) {
                 </div>
               ) : null}
 
-            
+
             </div>
           </div>
         </div>
@@ -454,6 +471,72 @@ export function Header({ className }: HeaderProps) {
           router.push("/checkout");
         }}
       />
+
+
+      <Modal
+        open={authModalOpen || resetModal !== "none"}
+        onClose={() => {
+          setAuthModalOpen(false);
+          setResetModal("none");
+        }}
+        className="auth-modal-responsive"
+      >
+              <style jsx global>{`
+                @media (max-width: 600px) {
+                  .auth-modal-responsive .auth-card-container {
+                    width: 100vw !important;
+                    min-width: 0 !important;
+                    max-width: 100vw !important;
+                    padding: 24px 8px !important;
+                    border-radius: 0 !important;
+                  }
+                }
+              `}</style>
+        {activeAuthScreen === "reset" && (
+          <ResetPasswordCard
+            onReset={(email) => {
+              console.log("[reset-password]", email);
+            }}
+          />
+        )}
+
+        {activeAuthScreen === "new" && (
+          <NewPasswordCard
+            onSave={(values) => {
+              console.log("[new-password]", values);
+              setResetModal("updated");
+            }}
+          />
+        )}
+
+        {activeAuthScreen === "updated" && (
+          <PasswordUpdatedCard
+            onLogin={() => {
+              setResetModal("none");
+              setAuthModalOpen(true);
+              setAuthTab("login");
+            }}
+          />
+        )}
+
+        {activeAuthScreen === "login" && (
+          <LoginCard
+            onRegisterClick={() => setAuthTab("register")}
+            onForgotPassword={() => {
+              setAuthModalOpen(false);
+              setResetModal("reset");
+            }}
+            onLogin={(values) => console.log("[login]", values)}
+          />
+        )}
+
+        {activeAuthScreen === "register" && (
+          <RegisterCard
+            onBack={() => setAuthTab("login")}
+            onRegister={(values) => console.log("[register]", values)}
+          />
+        )}
+      </Modal>
     </>
   );
 }

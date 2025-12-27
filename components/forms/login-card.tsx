@@ -1,103 +1,76 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Eye, EyeOff, X } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { AuthCardContainer } from "@/components/ui/auth-card-container";
+import { AuthHeading } from "@/components/ui/auth-heading";
+import { AuthTabs } from "@/components/auth/authTabs";
+import { PasswordInput } from "@/components/auth/passwordInput";
+import { InputText } from "@/components/ui/input-text";
+import { PrimaryButton } from "@/components/ui/primary-button";
+import { SecondaryButton } from "@/components/ui/secondary-button";
 
 type LoginCardProps = {
-  className?: string;
+  onRegisterClick?: () => void;
+  onLogin?: (v: { email: string; password: string }) => void;
+  onForgotPassword?: () => void;
 };
 
-export function LoginCard({ className }: LoginCardProps) {
-  const [showPassword, setShowPassword] = useState(false);
+export function LoginCard({ onRegisterClick, onLogin, onForgotPassword }: LoginCardProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
-    <div
-      className={cn(
-        "w-full max-w-md rounded-[28px] bg-white/95 p-8 shadow-2xl ring-1 ring-black/5 backdrop-blur",
-        className,
-      )}
-    >
-      <div className="mb-4 flex items-center justify-between text-sm font-semibold text-emerald-950">
-        <span className="inline-flex items-center gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Login
-        </span>
-        <button
-          type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:text-emerald-900"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
+    <AuthCardContainer>
+      <AuthHeading>LOGIN</AuthHeading>
 
-      <h2 className="text-xl font-semibold tracking-[0.14em] text-emerald-950">
-        LOGIN
-      </h2>
+      <AuthTabs active="login" onRegister={onRegisterClick} />
 
-      <div className="mt-6 flex items-center gap-8 text-sm font-medium text-slate-500">
-        <button
-          type="button"
-          className="relative pb-3 text-emerald-900"
-          aria-current="page"
-        >
-          Sign in
-          <span className="absolute inset-x-0 -bottom-[2px] h-[2px] rounded-full bg-emerald-900" />
-        </button>
-        <button type="button" className="pb-3">
-          I&apos;m new here
-        </button>
-      </div>
+      <form
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          gap: 24,
+          maxWidth: 400,
+          margin: "0 auto",
+        }}
+        onSubmit={e => {
+          e.preventDefault();
+          onLogin?.({ email, password });
+        }}
+      >
+        <InputText
+          type="email"
+          placeholder="Email Address*"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+          style={{ fontSize: 16, padding: '12px 8px' }}
+        />
 
-      <form className="mt-6 space-y-7">
-        <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
-            Email Address*
-          </label>
-          <input
-            type="email"
-            placeholder="you@example.com"
-            className="w-full border-b border-slate-200 pb-3 text-sm text-emerald-950 placeholder:text-slate-400 focus:border-emerald-900 focus:outline-none"
-          />
-        </div>
+        <PasswordInput
+          placeholder="Password*"
+          value={password}
+          onChange={setPassword}
+        />
 
-        <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
-            Password*
-          </label>
-          <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              className="w-full text-sm text-emerald-950 placeholder:text-slate-400 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="text-slate-500 transition hover:text-emerald-900"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <Button className="h-12 w-full rounded-full bg-brand-forest text-base font-semibold tracking-wide text-white hover:bg-brand-leaf">
-          LOGIN
-        </Button>
+        <PrimaryButton type="submit" style={{ fontSize: 16, padding: '14px 0' }}>LOGIN</PrimaryButton>
+        <SecondaryButton type="button" onClick={onForgotPassword} style={{ fontSize: 16, padding: '14px 0' }}>
+          FORGOT PASSWORD
+        </SecondaryButton>
       </form>
 
-      <div className="mt-6 text-center text-sm font-semibold uppercase tracking-[0.08em] text-brand-forest">
-        <button type="button" className="underline underline-offset-4">
-          Forgot password
-        </button>
-      </div>
-    </div>
+      <style jsx global>{`
+        @media (max-width: 600px) {
+          .auth-card-container {
+            width: 100vw !important;
+            min-width: 0 !important;
+            max-width: 100vw !important;
+            padding: 24px 8px !important;
+            border-radius: 0 !important;
+          }
+        }
+      `}</style>
+    </AuthCardContainer>
   );
 }
