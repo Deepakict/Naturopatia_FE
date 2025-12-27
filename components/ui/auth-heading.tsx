@@ -7,8 +7,9 @@ export function AuthHeading({ children }: AuthHeadingProps) {
   return (
     <Heading>
       <span
+        className="auth-heading-mobile"
         style={{
-          color: 'var(--Brand-Deep-Forest-Green, #1D3A34)',
+          color: '#1D3A34',
           fontFamily: 'Optima',
           fontSize: 32,
           fontStyle: 'normal',
@@ -19,6 +20,19 @@ export function AuthHeading({ children }: AuthHeadingProps) {
       >
         {children}
       </span>
+      <style>{`
+        @media (max-width: 640px) {
+          .auth-heading-mobile {
+            color: #102D26 !important;
+            text-align: center !important;
+            font-family: Optima !important;
+            font-size: 20px !important;
+            font-style: normal !important;
+            font-weight: 550 !important;
+            line-height: 140% !important;
+          }
+        }
+      `}</style>
     </Heading>
   );
 }

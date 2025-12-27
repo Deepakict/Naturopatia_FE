@@ -60,17 +60,7 @@ export function LoginCard({ onRegisterClick, onLogin, onForgotPassword }: LoginC
         </SecondaryButton>
       </form>
 
-      <style jsx global>{`
-        @media (max-width: 600px) {
-          .auth-card-container {
-            width: 100vw !important;
-            min-width: 0 !important;
-            max-width: 100vw !important;
-            padding: 24px 8px !important;
-            border-radius: 0 !important;
-          }
-        }
-      `}</style>
+
     </AuthCardContainer>
   );
 }

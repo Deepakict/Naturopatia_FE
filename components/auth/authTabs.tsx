@@ -12,8 +12,12 @@ export function AuthTabs({ active, onLogin, onRegister }: AuthTabsProps) {
     padding: "12px 0",
     background: "transparent",
     borderBottom: activeTab ? "1px solid #1D3A34" : "1px solid transparent",
+    fontFamily: 'Inter Tight',
     fontSize: 14,
-    color: "#1D3A34",
+    color: '#102D26',
+    fontStyle: 'normal',
+    fontWeight: 400,
+    lineHeight: '20px',
     cursor: "pointer",
   });
 
