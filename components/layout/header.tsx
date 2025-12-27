@@ -2,7 +2,7 @@
 
 import { Modal } from "@/components/ui/modal";
 import { LoginCard } from "@/components/forms/auth/login-card";
-import { MyProfileCard } from "@/components/forms/authorization/my-profile-card";
+import MyProfileCard from "@/components/forms/authorization/my-profile-card";
 import { RegisterCard } from "@/components/forms/auth/register-card";
 import { ResetPasswordCard } from "@/components/forms/auth/reset-password-card";
 import { NewPasswordCard } from "@/components/forms/auth/new-password-card";

@@ -17,6 +17,8 @@ import { LogoutCard } from "@/components/forms/authorization/logout-card";
 import { Heading } from "@/components/ui/heading";
 import { CardContainer } from "@/components/ui/card-container";
 import { SubHeading } from "@/components/ui/sub-heading";
+import Preferences from "./preferences";
+import AddressCard from "./address-card";
 import { Title } from "@/components/ui/title";
 
 
@@ -28,28 +30,55 @@ export interface MyProfileCardProps {
   onLogout: () => void;
 }
 
-export const MyProfileCard: React.FC<MyProfileCardProps> = ({ name, email, phone, address, onLogout }) => {
+const MyProfileCard: React.FC<MyProfileCardProps> = ({
+  name,
+  email,
+  phone,
+  address,
+  onLogout,
+}) => {
+  const [showPreferences, setShowPreferences] = useState(false);
+  const [showAddress, setShowAddress] = useState(false);
+  // Split name into first and last for Preferences
+  const [firstName, lastName] = name ? name.split(" ") : [name, ""];
 
   return (
     <>
-      <CardContainer>
-        <Heading>MY PROFILE</Heading>
-        <div className="w-full flex flex-col gap-6">
-          <div style={cardSectionStyle}>
-            <SubHeading>Preferences</SubHeading>
-            <Title>{name}</Title>
-            <Title>{email}</Title>
-            <Title>{phone}</Title>
+      {showPreferences ? (
+        <Preferences
+          firstName={firstName}
+          lastName={lastName}
+          email={email}
+          phone={phone}
+          onBack={() => setShowPreferences(false)}
+        />
+      ) : showAddress ? (
+        <AddressCard
+          address={address}
+          onBack={() => setShowAddress(false)}
+        />
+      ) : (
+        <CardContainer>
+          <Heading>MY PROFILE</Heading>
+          <div className="w-full flex flex-col gap-6">
+            <div style={cardSectionStyle}>
+              <SubHeading style={{cursor:'pointer'}} onClick={() => setShowPreferences(true)}>Preferences</SubHeading>
+              <Title>{name}</Title>
+              <Title>{email}</Title>
+              <Title>{phone}</Title>
+            </div>
+            <div style={cardSectionStyle}>
+              <SubHeading style={{cursor:'pointer'}} onClick={() => setShowAddress(true)}>Address</SubHeading>
+              <Title>{address}</Title>
+            </div>
           </div>
-          <div style={cardSectionStyle}>
-            <SubHeading>Address</SubHeading>
-            <Title>{address}</Title>
-          </div>
-        </div>
-        <PrimaryButton variant="v2" onClick={onLogout}>
-          LOGOUT
-        </PrimaryButton>
-      </CardContainer>
+          <PrimaryButton variant="v2" onClick={onLogout}>
+            LOGOUT
+          </PrimaryButton>
+        </CardContainer>
+      )}
     </>
   );
 };
+
+export default MyProfileCard;

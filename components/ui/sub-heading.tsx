@@ -19,8 +19,20 @@ export const subHeadingTextStyle: React.CSSProperties = {
 };
 
 
-export const SubHeading: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div style={subHeadingContainerStyle}>
+type SubHeadingProps = {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+};
+
+export const SubHeading: React.FC<SubHeadingProps> = ({ children, style, onClick }) => (
+  <div
+    style={{ ...subHeadingContainerStyle, ...style }}
+    onClick={onClick}
+    tabIndex={onClick ? 0 : undefined}
+    role={onClick ? "button" : undefined}
+    onKeyPress={onClick ? (e: React.KeyboardEvent<HTMLDivElement>) => { if (e.key === "Enter" || e.key === " ") onClick(e as unknown as React.MouseEvent<HTMLDivElement>); } : undefined}
+  >
     <span style={subHeadingTextStyle}>
       {children}
     </span>
