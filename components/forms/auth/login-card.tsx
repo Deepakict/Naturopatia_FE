@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { AuthCardContainer } from "@/components/ui/auth-card-container";
-import { AuthHeading } from "@/components/ui/auth-heading";
+import { CardContainer } from "@/components/ui/card-container";
 import { AuthTabs } from "@/components/forms/auth/authTabs";
 import { PasswordInput } from "@/components/forms/auth/passwordInput";
 import { InputText } from "@/components/ui/input-text";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { SecondaryButton } from "@/components/ui/secondary-button";
+import { Heading } from "@/components/ui/heading";
 
 type LoginCardProps = {
   onRegisterClick?: () => void;
@@ -20,8 +20,8 @@ export function LoginCard({ onRegisterClick, onLogin, onForgotPassword }: LoginC
   const [password, setPassword] = useState("");
 
   return (
-    <AuthCardContainer>
-      <AuthHeading>LOGIN</AuthHeading>
+    <CardContainer>
+      <Heading>LOGIN</Heading>
 
       <AuthTabs active="login" onRegister={onRegisterClick} />
 
@@ -61,6 +61,6 @@ export function LoginCard({ onRegisterClick, onLogin, onForgotPassword }: LoginC
       </form>
 
 
-    </AuthCardContainer>
+    </CardContainer>
   );
 }

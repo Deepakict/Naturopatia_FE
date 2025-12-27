@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AuthCardContainer } from "@/components/ui/auth-card-container";
-import { AuthHeading } from "@/components/ui/auth-heading";
+import { CardContainer } from "@/components/ui/card-container";
+import { Heading } from "@/components/ui/heading";
 import { AuthTabs } from "@/components/forms/auth/authTabs";
 import { PasswordInput } from "@/components/forms/auth/passwordInput";
 import { InputText } from "@/components/ui/input-text";
@@ -31,8 +31,8 @@ export function RegisterCard({ onBack, onRegister }: RegisterCardProps) {
   });
 
   return (
-    <AuthCardContainer>
-      <AuthHeading>CREATE AN ACCOUNT</AuthHeading>
+    <CardContainer>
+      <Heading>CREATE AN ACCOUNT</Heading>
 
       <AuthTabs active="register" onLogin={onBack} />
 
@@ -62,6 +62,6 @@ export function RegisterCard({ onBack, onRegister }: RegisterCardProps) {
 
         <PrimaryButton type="submit">CREATE AN ACCOUNT</PrimaryButton>
       </form>
-    </AuthCardContainer>
+    </CardContainer>
   );
 }

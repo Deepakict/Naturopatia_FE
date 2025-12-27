@@ -2,16 +2,17 @@
 
 import { Modal } from "@/components/ui/modal";
 import { LoginCard } from "@/components/forms/auth/login-card";
+import { MyProfileCard } from "@/components/forms/authorization/my-profile-card";
 import { RegisterCard } from "@/components/forms/auth/register-card";
 import { ResetPasswordCard } from "@/components/forms/auth/reset-password-card";
 import { NewPasswordCard } from "@/components/forms/auth/new-password-card";
 import { PasswordUpdatedCard } from "@/components/forms/auth/password-updated-card";
+import { LogoutCard } from "@/components/forms/authorization/logout-card";
 import { ChevronRight, Menu, ShoppingBag, User, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
-
 import { cn } from "@/lib/utils";
 import { CartModal } from "./cart-modal";
 import { useCart } from "./cart-context";
@@ -67,6 +68,9 @@ const badgeToneClasses = (tone?: string) => {
 };
 
 export function Header({ className }: HeaderProps) {
+  // Simulated user state. Replace with real auth logic.
+  const [user, setUser] = useState<null | { name: string; email: string; phone: string; address: string }>(null);
+  const [showLogout, setShowLogout] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -240,7 +244,10 @@ export function Header({ className }: HeaderProps) {
               type="button"
               className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-forest text-white shadow-sm transition hover:bg-brand-leaf"
               aria-label="Account"
-              onClick={() => setAuthModalOpen(true)}
+              onClick={() => {
+                setAuthModalOpen(true);
+                setShowLogout(false);
+              }}
             >
               <User className="h-4 w-4" />
             </button>
@@ -474,9 +481,10 @@ export function Header({ className }: HeaderProps) {
 
 
       <Modal
-        open={authModalOpen || resetModal !== "none"}
+        open={authModalOpen || showLogout || resetModal !== "none"}
         onClose={() => {
           setAuthModalOpen(false);
+          setShowLogout(false);
           setResetModal("none");
         }}
         className="auth-modal-responsive"
@@ -520,14 +528,48 @@ export function Header({ className }: HeaderProps) {
         )}
 
         {activeAuthScreen === "login" && (
-          <LoginCard
-            onRegisterClick={() => setAuthTab("register")}
-            onForgotPassword={() => {
-              setAuthModalOpen(false);
-              setResetModal("reset");
-            }}
-            onLogin={(values) => console.log("[login]", values)}
-          />
+          showLogout ? (
+            <LogoutCard
+              onLogout={() => {
+                setUser(null);
+                setShowLogout(false);
+                setAuthModalOpen(false);
+              }}
+              onCancel={() => {
+                setShowLogout(false);
+                setAuthModalOpen(true);
+              }}
+            />
+          ) : user ? (
+            <MyProfileCard
+              name={user.name}
+              email={user.email}
+              phone={user.phone}
+              address={user.address}
+              onLogout={() => {
+                setShowLogout(true);
+                setAuthModalOpen(false);
+              }}
+            />
+          ) : (
+            <LoginCard
+              onRegisterClick={() => setAuthTab("register")}
+              onForgotPassword={() => {
+                setAuthModalOpen(false);
+                setResetModal("reset");
+              }}
+              onLogin={(values) => {
+                // Simulate login and set user
+                setUser({
+                  name: "John Doe",
+                  email: values.email,
+                  phone: "+1 234 567 890",
+                  address: "123 Main St, City, Country"
+                });
+                setAuthModalOpen(false);
+              }}
+            />
+          )
         )}
 
         {activeAuthScreen === "register" && (

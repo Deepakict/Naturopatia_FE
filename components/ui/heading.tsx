@@ -1,21 +1,50 @@
 import React from "react";
 
-export function Heading({ children, style, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+type HeadingProps = {
+  children: React.ReactNode;
+  as?: React.ElementType;
+  style?: React.CSSProperties;
+  className?: string;
+} & React.HTMLAttributes<HTMLHeadingElement>;
+
+export function Heading({
+  children,
+  as = "h1",
+  style = {},
+  className = "",
+  ...props
+}: HeadingProps) {
+  const Tag = as;
   return (
-    <h1
+    <Tag
+      className={`heading-mobile ${className}`}
       style={{
-        color: 'var(--Brand-Deep-Forest-Green, #1D3A34)',
+        color: '#1D3A34',
         textAlign: 'center',
         fontFamily: 'Optima',
         fontSize: 32,
         fontStyle: 'normal',
         fontWeight: 550,
         lineHeight: '140%',
+        display: 'block',
         ...style,
       }}
       {...props}
     >
       {children}
-    </h1>
+      <style>{`
+        @media (max-width: 640px) {
+          .heading-mobile {
+            color: #102D26 !important;
+            text-align: center !important;
+            font-family: Optima !important;
+            font-size: 20px !important;
+            font-style: normal !important;
+            font-weight: 550 !important;
+            line-height: 140% !important;
+          }
+        }
+      `}</style>
+    </Tag>
   );
 }

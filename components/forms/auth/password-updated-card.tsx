@@ -1,8 +1,8 @@
 "use client";
 
 
-import { AuthCardContainer } from "@/components/ui/auth-card-container";
-import { AuthHeading } from "@/components/ui/auth-heading";
+import { CardContainer } from "@/components/ui/card-container";
+import { Heading } from "@/components/ui/heading";
 import { SuccessIcon } from "@/components/ui/success-icon";
 import { PrimaryButton } from "@/components/ui/primary-button";
 
@@ -14,12 +14,12 @@ export type PasswordUpdatedCardProps = {
 
 export function PasswordUpdatedCard({ className, onLogin, onCancel }: PasswordUpdatedCardProps) {
   return (
-    <AuthCardContainer className={className}>
+    <CardContainer className={className}>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 24 }}>
         <SuccessIcon />
-        <AuthHeading>
+        <Heading>
           <span style={{ display: 'block', textAlign: 'start' }}>PASSWORD UPDATED</span>
-        </AuthHeading>
+        </Heading>
         <div style={{ color: '#1D3A34', fontFamily: 'Inter Tight', fontSize: 16, marginBottom: 8, }}>
           Your password has been changed successfully. You can now log in with your new password.
         </div>
@@ -27,6 +27,6 @@ export function PasswordUpdatedCard({ className, onLogin, onCancel }: PasswordUp
       <PrimaryButton type="button" onClick={onLogin}>
         LOGIN
       </PrimaryButton>
-    </AuthCardContainer>
+    </CardContainer>
   );
 }

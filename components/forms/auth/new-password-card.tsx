@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AuthCardContainer } from "@/components/ui/auth-card-container";
-import { AuthHeading } from "@/components/ui/auth-heading";
+import { CardContainer } from "@/components/ui/card-container";
+import { Heading } from "@/components/ui/heading";
 import { PasswordInput } from "@/components/forms/auth/passwordInput";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { isStrongPassword } from "@/components/forms/auth/passwordRules";
@@ -17,8 +17,8 @@ export function NewPasswordCard({ onSave }: NewPasswordCardProps) {
   const [error, setError] = useState("");
 
   return (
-    <AuthCardContainer>
-      <AuthHeading>CREATE A NEW PASSWORD</AuthHeading>
+    <CardContainer>
+      <Heading>CREATE A NEW PASSWORD</Heading>
       <div style={{ color: '#1D3A34', fontFamily: 'Inter Tight', fontSize: 16, marginBottom: 16 }}>
         Make sure your new password is strong and unique.
       </div>
@@ -47,6 +47,6 @@ export function NewPasswordCard({ onSave }: NewPasswordCardProps) {
         {error && <div style={{ color: "#E5210E", fontSize: 13 }}>{error}</div>}
         <PrimaryButton type="submit">SAVE NEW PASSWORD</PrimaryButton>
       </form>
-    </AuthCardContainer>
+    </CardContainer>
   );
 }

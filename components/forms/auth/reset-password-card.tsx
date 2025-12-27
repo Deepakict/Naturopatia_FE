@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AuthCardContainer } from "@/components/ui/auth-card-container";
-import { AuthHeading } from "@/components/ui/auth-heading";
+import { CardContainer } from "@/components/ui/card-container";
+import { Heading } from "@/components/ui/heading";
 import { InputText } from "@/components/ui/input-text";
 import { PrimaryButton } from "@/components/ui/primary-button";
 
@@ -15,8 +15,8 @@ export function ResetPasswordCard({ onReset }: ResetPasswordCardProps) {
   const [sent, setSent] = useState(false);
 
   return (
-    <AuthCardContainer>
-      <AuthHeading>RESET PASSWORD</AuthHeading>
+    <CardContainer>
+      <Heading>RESET PASSWORD</Heading>
       {!sent ? (
         <>
           <div style={{ color: '#1D3A34', fontFamily: 'Inter Tight', fontSize: 16, marginBottom: 24 }}>
@@ -65,6 +65,6 @@ export function ResetPasswordCard({ onReset }: ResetPasswordCardProps) {
           </div>
         </>
       )}
-    </AuthCardContainer>
+    </CardContainer>
   );
 }
